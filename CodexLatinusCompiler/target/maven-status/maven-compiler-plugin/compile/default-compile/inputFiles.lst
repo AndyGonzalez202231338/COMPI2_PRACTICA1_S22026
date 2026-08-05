@@ -1,0 +1,8 @@
+/home/andy/NetBeansProjects/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/CodexLatinusCompiler.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/errors/ErrorListenerConsola.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusBaseListener.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusBaseVisitor.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusLexer.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusListener.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser.java
+/home/andy/NetBeansProjects/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusVisitor.java
