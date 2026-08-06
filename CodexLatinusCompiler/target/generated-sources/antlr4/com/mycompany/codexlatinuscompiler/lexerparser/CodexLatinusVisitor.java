@@ -137,6 +137,12 @@ public interface CodexLatinusVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCondicional(CodexLatinusParser.CondicionalContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CodexLatinusParser#bloque}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBloque(CodexLatinusParser.BloqueContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CodexLatinusParser#cicloDum}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

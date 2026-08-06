@@ -218,6 +218,16 @@ public interface CodexLatinusListener extends ParseTreeListener {
 	 */
 	void exitCondicional(CodexLatinusParser.CondicionalContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CodexLatinusParser#bloque}.
+	 * @param ctx the parse tree
+	 */
+	void enterBloque(CodexLatinusParser.BloqueContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CodexLatinusParser#bloque}.
+	 * @param ctx the parse tree
+	 */
+	void exitBloque(CodexLatinusParser.BloqueContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CodexLatinusParser#cicloDum}.
 	 * @param ctx the parse tree
 	 */
