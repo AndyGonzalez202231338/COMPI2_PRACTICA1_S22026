@@ -269,6 +269,18 @@ public class CodexLatinusBaseListener implements CodexLatinusListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterBloque(CodexLatinusParser.BloqueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBloque(CodexLatinusParser.BloqueContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCicloDum(CodexLatinusParser.CicloDumContext ctx) { }
 	/**
 	 * {@inheritDoc}

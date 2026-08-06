@@ -101,12 +101,15 @@ accesoAsignable
 
 /* CONDICIONALES  (si / aliter ... finis;) */
 condicional
-    : SI LPAREN expresion RPAREN LBRACE sentencia* RBRACE
-      (ALITER LPAREN expresion RPAREN LBRACE sentencia* RBRACE)*
-      (ALITER LBRACE sentencia* RBRACE)?
+    : SI LPAREN expresion RPAREN bloque
+      (ALITER LPAREN expresion RPAREN bloque)*
+      (ALITER bloque)?
       FINIS_SENTENCIAS SEMI
     ;
 
+bloque
+    : LBRACE sentencia* RBRACE
+    ;
 /*  CICLOS  */
 cicloDum
     : DUM LPAREN expresion RPAREN LBRACE sentencia* RBRACE FINIS_SENTENCIAS SEMI
