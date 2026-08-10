@@ -5,8 +5,12 @@
 package com.mycompany.codexlatinuscompiler.ast;
 import java.util.List;
 /**
- *
  * @author andy
+ * 
+ * cicloPer
+    : PER LPAREN declaracionVariable expresion SEMI expresion RPAREN LBRACE sentencia* RBRACE
+    ;
+
  */
 public class NodoPer extends NodoAST { // for
     public NodoDeclaracionVariable inicializacion;

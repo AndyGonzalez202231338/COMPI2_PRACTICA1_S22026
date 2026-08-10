@@ -188,6 +188,16 @@ public interface CodexLatinusListener extends ParseTreeListener {
 	 */
 	void exitSentencia(CodexLatinusParser.SentenciaContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CodexLatinusParser#retorno}.
+	 * @param ctx the parse tree
+	 */
+	void enterRetorno(CodexLatinusParser.RetornoContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CodexLatinusParser#retorno}.
+	 * @param ctx the parse tree
+	 */
+	void exitRetorno(CodexLatinusParser.RetornoContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CodexLatinusParser#asignacion}.
 	 * @param ctx the parse tree
 	 */

@@ -3,15 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package com.mycompany.codexlatinuscompiler.ast;
-import java.util.List;
-/**
- * @author andy
- * cicloFacere
-    : FACERE LBRACE sentencia* RBRACE DUM LPAREN expresion RPAREN SEMI
-    ;
 
+/**
+ *
+ * @author andy
  */
-public class NodoFacere extends NodoAST { // do-while
-    public List<NodoAST> cuerpo;
-    public NodoAST condicion;
+public class NodoRetorno extends NodoAST {
+    public NodoAST valor;
 }

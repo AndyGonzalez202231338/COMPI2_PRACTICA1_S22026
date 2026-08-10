@@ -6,8 +6,15 @@ package com.mycompany.codexlatinuscompiler.ast;
 import java.util.List;
 
 /**
- *
  * @author andy
+ * listaAtributos
+    : atributo (COMMA atributo)*
+    ;
+ *
+ * structura Selva {
+    esto valido : verum;
+    series animales : Animal​:
+    }
  */
 public class NodoAtributoStruct extends NodoAST {
     public String nombre;

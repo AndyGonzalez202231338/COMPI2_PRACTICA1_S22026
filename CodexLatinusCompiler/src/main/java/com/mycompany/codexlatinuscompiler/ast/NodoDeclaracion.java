@@ -9,5 +9,12 @@ package com.mycompany.codexlatinuscompiler.ast;
  * @author andy
  */
 public abstract class NodoDeclaracion extends NodoAST {
-
+    /**
+     *  declaracion
+        : declaracionVariable
+        | declaracionArray
+        | declaracionStructDef
+        | declaracionStructVar
+        ;
+     */
 }

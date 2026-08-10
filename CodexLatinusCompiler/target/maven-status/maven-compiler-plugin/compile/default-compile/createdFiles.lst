@@ -10,6 +10,7 @@ com/mycompany/codexlatinuscompiler/ast/NodoAccesoAtributo.class
 com/mycompany/codexlatinuscompiler/ast/NodoAccesoArreglo.class
 com/mycompany/codexlatinuscompiler/ast/NodoFuncion.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionFuncionesContext.class
+com/mycompany/codexlatinuscompiler/ast/ASTBuilder.class
 com/mycompany/codexlatinuscompiler/ast/NodoUnaria.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AccesoAsignableContext.class
@@ -20,6 +21,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionMulti
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ProgramaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionVariablesContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionPrincipalContext.class
+com/mycompany/codexlatinuscompiler/ast/NodoRetorno.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ParametroContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CicloPerContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionStructDefContext.class
@@ -27,6 +29,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AtributoContex
 com/mycompany/codexlatinuscompiler/ast/NodoInterrumpe.class
 com/mycompany/codexlatinuscompiler/ast/NodoLectura.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionContext.class
+com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$RetornoContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SentenciaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaAtributosContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracionArray.class
