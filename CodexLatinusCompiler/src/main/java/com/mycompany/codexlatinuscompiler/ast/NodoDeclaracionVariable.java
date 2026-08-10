@@ -5,8 +5,10 @@
 package com.mycompany.codexlatinuscompiler.ast;
 
 /**
- *
  * @author andy
+ *  declaracionVariable
+    : ESTO ID COLON tipoPrimitivo expresion? SEMI
+    ;
  */
 public class NodoDeclaracionVariable extends NodoDeclaracion {
     public String nombre;

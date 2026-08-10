@@ -14,7 +14,6 @@ public class NodoFuncion extends NodoAST {
     public String nombre;
     public String tipoRetorno;               // null si es "actio" (sin retorno)
     public List<NodoParametro> parametros;
-    public List<NodoDeclaracionVariable> variablesLocales; // sección VARIABILES[...]
+    public List<NodoDeclaracion> variablesLocales; // sección VARIABILES[...]
     public List<NodoAST> cuerpo;
-    public NodoAST expresionRetorno;         // solo aplica a "ratio"; null si es "actio"
 }

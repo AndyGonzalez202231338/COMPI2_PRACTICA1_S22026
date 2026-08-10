@@ -1,5 +1,7 @@
 package com.mycompany.codexlatinuscompiler;
 
+import com.mycompany.codexlatinuscompiler.ast.ASTBuilder;
+import com.mycompany.codexlatinuscompiler.ast.NodoPrograma;
 import com.mycompany.codexlatinuscompiler.errors.ErrorListenerConsola;
 import com.mycompany.codexlatinuscompiler.lexerparser.CodexLatinusLexer;
 import com.mycompany.codexlatinuscompiler.lexerparser.CodexLatinusParser;
@@ -28,6 +30,9 @@ public class CodexLatinusCompiler {
 
             // Cambia "programa" por el nombre real de tu regla de entrada
             ParseTree arbol = parser.programa();
+            
+            ASTBuilder builder = new ASTBuilder();
+            NodoPrograma ast = (NodoPrograma) builder.visit(arbol);
 
             System.out.println("=== Árbol sintáctico (LISP-style) ===");
             System.out.println(arbol.toStringTree(parser));

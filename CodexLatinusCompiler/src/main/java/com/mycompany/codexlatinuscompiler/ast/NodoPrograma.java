@@ -9,8 +9,8 @@ import java.util.List;
  *
  * @author andy
  */
-public class NodoPrograma extends NodoAST{
-    public List<NodoDeclaracion> variablesGlobales;
-    public List<NodoFuncion> funciones;
-    public List<NodoAST> sentenciasPrincipal;
+public class NodoPrograma extends NodoAST{ // programa
+    public List<NodoDeclaracion> variablesGlobales; //seccion variables 
+    public List<NodoFuncion> funciones; //seccion funciones
+    public List<NodoAST> sentenciasPrincipal; // seccion principal
 }

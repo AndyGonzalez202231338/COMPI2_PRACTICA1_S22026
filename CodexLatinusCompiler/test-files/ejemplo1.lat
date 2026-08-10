@@ -1,3 +1,146 @@
+##
+    Codex Latinus - Programa de prueba
+    Objetivo: ejercitar todas las construcciones del lenguaje
+    (variables, arreglos, estructuras anidadas, funciones,
+    recursividad, inferencia de tipos, condicionales, los tres
+    tipos de ciclo, break/continue e I/O)
+##
+
+VARIABILES>
+
+// ---- Estructuras globales (pueden anidarse) ----
+structura Arma {
+    esto nombre : textum;
+    esto danio : numerus;
+} finis;
+
+structura Guerrero {
+    esto nombre : textum;
+    esto vida : numerus;
+    esto activo : verum;   // se usa 'verum' como marcador de tipo booleano
+    series inventario : Arma;
+} finis;
+
+// ---- Variables primitivas ----
+esto contador : numerus 0;
+esto mensaje : textum "Inicio del programa";
+esto pi_aprox : decimalis 3.14;
+esto letra : littera 'R';
+esto bandera : falsus;
+
+// ---- Arreglos ----
+series puntajes[5] : numerus {10, 20, 30, 40, 50};
+series nombres[3] : textum {"Ana", "Luis", "Marco"};
+
+// ---- Instancia de estructura con arreglo de estructuras ----
+esto heroe : Guerrero {
+    nombre: "Maximus",
+    vida: 100,
+    activo: verum,
+    inventario: Arma[3]
+};
+
+##
+    Seccion de funciones
+##
+MUNERA>
+
+// Funcion con retorno + recursividad
+ratio numerus factorial(esto n : numerus) {
+    si (n <= 1) {
+        reddere 1;
+    } aliter {
+        reddere n * factorial(n - 1);
+    } finis;
+} finis;
+
+// Funcion sin retorno, usa ciclo for para modificar un arreglo global
+actio llenarPuntajes() {
+    per (esto i : numerus 0; i < 5; i++) {
+        puntajes[i] = puntajes[i] + 1;
+    }
+} finis;
+
+// Funcion con retorno que solo usa valores primitivos como parametros
+// (recuerda: no se pueden pasar arreglos ni estructuras completas)
+ratio textum obtenerSaludo(esto nombre : textum, esto vida : numerus) {
+    VARIABILES[
+        esto saludo : textum "Guerrero ";
+    ]
+    reddere saludo + nombre + " tiene " + vida + " puntos de vida";
+} finis;
+
+##
+    Seccion principal (obligatoria)
+##
 MAIOR>
->> "Hola comandante!";
+
+>> "=== Codex Latinus: Programa de prueba ===";
+
+// Lectura de datos por consola
+>> "Ingresa tu nombre, comandante:";
+mensaje <<
+>> "Bienvenido, " >> mensaje;
+
+// Condicional encadenado (si / aliter (cond) / aliter)
+si (contador == 0) {
+    >> "El contador esta en cero";
+} aliter (contador < 0) {
+    >> "El contador es negativo";
+} aliter {
+    >> "El contador es positivo";
+} finis;
+
+// Ciclo dum (while) con perge (continue)
+dum (contador < 5) {
+    contador = contador + 1;
+    si (contador == 3) {
+        perge;
+    } finis;
+    >> "Contador: " >> contador;
+} finis;
+
+// Ciclo facere ... dum (do-while)
+esto intentos : numerus 0;
+facere {
+    intentos++;
+    >> "Intento numero: " >> intentos;
+} dum (intentos < 3);
+
+// Ciclo per (for) con interrumpe (break)
+per (esto j : numerus 0; j < 10; j++) {
+    si (j == 4) {
+        interrumpe;
+    } finis;
+    >> puntajes[j];
+}
+
+// Llamadas a funciones
+llenarPuntajes();
+esto fact5 : numerus factorial(5);
+>> "Factorial de 5 es: " >> fact5;
+
+esto saludoFinal : textum obtenerSaludo(heroe.nombre, heroe.vida);
+>> saludoFinal;
+
+// Asignacion a un elemento de un arreglo de estructuras anidado
+heroe.inventario[0] = {
+    nombre: "Gladius",
+    danio: 15
+};
+>> "Arma equipada: " >> heroe.inventario[0].nombre;
+
+// Inferencia de tipos: numerus + decimalis -> decimalis
+esto resultadoMixto : decimalis pi_aprox + contador;
+>> "Resultado mixto: " >> resultadoMixto;
+
+// Inferencia de tipos: textum + littera -> textum (concatenacion)
+esto concatenado : textum "Letra inicial: " + letra;
+>> concatenado;
+
+// Operadores logicos y relacionales
+si (heroe.activo && heroe.vida > 50) {
+    >> "El heroe esta listo para la batalla";
+} finis;
+
 FINIS;

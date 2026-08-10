@@ -6,8 +6,10 @@ package com.mycompany.codexlatinuscompiler.ast;
 import java.util.List;
 
 /**
- *
  * @author andy
+ *  declaracionArray
+    : SERIES ID LBRACK expresion RBRACK COLON tipo (LBRACE listaExpresiones RBRACE)? SEMI
+    ;
  */
 public class NodoDeclaracionArray extends NodoDeclaracion {
     public String nombre;

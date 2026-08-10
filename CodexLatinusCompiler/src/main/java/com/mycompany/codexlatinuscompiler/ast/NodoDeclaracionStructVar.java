@@ -5,8 +5,17 @@
 package com.mycompany.codexlatinuscompiler.ast;
 
 /**
- *
  * @author andy
+ * 
+ *  declaracionStructVar
+    : ESTO ID COLON ID literalEstructura SEMI?
+    ;
+ *
+ * 
+ * structura Animal {​
+    nombre: textum,​
+    apodo: textum​
+   }
  */
 public class NodoDeclaracionStructVar extends NodoDeclaracion {
     public String nombre;

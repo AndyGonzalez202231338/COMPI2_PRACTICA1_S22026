@@ -119,6 +119,12 @@ public interface CodexLatinusVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSentencia(CodexLatinusParser.SentenciaContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CodexLatinusParser#retorno}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRetorno(CodexLatinusParser.RetornoContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CodexLatinusParser#asignacion}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

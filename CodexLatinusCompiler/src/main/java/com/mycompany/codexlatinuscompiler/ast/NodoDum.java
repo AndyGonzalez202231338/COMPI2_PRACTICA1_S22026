@@ -5,8 +5,10 @@
 package com.mycompany.codexlatinuscompiler.ast;
 import java.util.List;
 /**
- *
  * @author andy
+ * cicloDum
+    : DUM LPAREN expresion RPAREN LBRACE sentencia* RBRACE FINIS_SENTENCIAS SEMI
+    ;
  */
 public class NodoDum extends NodoAST { // while
     public NodoAST condicion;

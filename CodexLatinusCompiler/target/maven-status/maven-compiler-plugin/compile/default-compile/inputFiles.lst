@@ -1,4 +1,5 @@
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/CodexLatinusCompiler.java
+/home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/ASTBuilder.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoAST.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoAccesoArreglo.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoAccesoAtributo.java
@@ -27,6 +28,7 @@
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoPer.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoPerge.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoPrograma.java
+/home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoRetorno.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoSi.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoUnaria.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/errors/ErrorListenerConsola.java

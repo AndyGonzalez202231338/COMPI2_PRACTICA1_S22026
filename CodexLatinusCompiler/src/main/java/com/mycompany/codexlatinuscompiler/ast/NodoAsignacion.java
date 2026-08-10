@@ -5,8 +5,11 @@
 package com.mycompany.codexlatinuscompiler.ast;
 
 /**
- *
  * @author andy
+ * asignacion
+    : accesoAsignable ASSIGN (expresion | literalEstructura) SEMI
+    ;
+
  */
 public class NodoAsignacion extends NodoAST {
     public NodoAST destino;   // NodoIdentificador, NodoAccesoArreglo o NodoAccesoAtributo

@@ -25,10 +25,14 @@ declaracion
 
 declaracionVariable
     : ESTO ID COLON tipoPrimitivo expresion? SEMI
+    | ESTO ID COLON (VERUM | FALSUS) SEMI
     ;
 
 declaracionArray
-    : SERIES ID LBRACK expresion RBRACK COLON tipo (LBRACE listaExpresiones RBRACE)? SEMI
+    : SERIES ID LBRACK expresion RBRACK COLON
+      (tipo (LBRACE listaExpresiones RBRACE)?
+      | LBRACE listaExpresiones RBRACE)
+      SEMI
     ;
 
 declaracionStructDef
@@ -36,15 +40,17 @@ declaracionStructDef
     ;
 
 listaAtributos
-    : atributo (COMMA atributo)*
+    : (atributo SEMI)*
     ;
 
 atributo
     : ESTO? ID COLON tipo
+    | SERIES ID COLON tipo
+    | ESTO? ID COLON (VERUM | FALSUS)
     ;
 
 declaracionStructVar
-    : ESTO ID COLON ID literalEstructura SEMI?
+    : ESTO ID COLON ID literalEstructura SEMI
     ;
 
 literalEstructura
@@ -81,6 +87,7 @@ sentencia
     : declaracion
     | asignacion
     | llamadaFuncion SEMI
+    | expresionUnaria SEMI
     | condicional
     | cicloDum
     | cicloFacere
@@ -89,10 +96,16 @@ sentencia
     | INTERRUMPE SEMI
     | lectura
     | escritura
+    | retorno 
+    ;
+
+retorno
+    : REDDERE expresion SEMI
     ;
 
 asignacion
-    : accesoAsignable ASSIGN (expresion | literalEstructura) SEMI
+    : accesoAsignable ASSIGN expresion SEMI
+    | accesoAsignable ASSIGN literalEstructura SEMI
     ;
 
 accesoAsignable
@@ -126,13 +139,12 @@ cicloPer
 /* FUNCIONES (RATIO/ACTIVO) */
 funcion
     : ACTIO ID LPAREN listaParametros? RPAREN LBRACE
-        (VARIABILES_LOCAL_HDR declaracionVariable* RBRACK)?
+        (VARIABILES_LOCAL_HDR declaracion* RBRACK)?
         sentencia*
       RBRACE FINIS_SENTENCIAS SEMI
     | RATIO tipo ID LPAREN listaParametros? RPAREN LBRACE
-        (VARIABILES_LOCAL_HDR declaracionVariable* RBRACK)?
+        (VARIABILES_LOCAL_HDR declaracion* RBRACK)?
         sentencia*
-        REDDERE expresion SEMI
       RBRACE FINIS_SENTENCIAS SEMI
     ;
 
@@ -155,7 +167,7 @@ listaExpresiones
 
 /*  ENTRADAS Y SALIDAS  */  
 lectura
-    : LEER (ID)? SEMI
+    : ID? LEER
     ;
 
 escritura
