@@ -1,3 +1,4 @@
+com/mycompany/codexlatinuscompiler/ResultadoCompilacion.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionLogicaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$LecturaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$TipoPrimitivoContext.class
@@ -13,10 +14,13 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionFuncion
 com/mycompany/codexlatinuscompiler/ast/ASTBuilder.class
 com/mycompany/codexlatinuscompiler/ast/NodoUnaria.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionContext.class
+com/mycompany/codexlatinuscompiler/symboltable/Simbolo.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AccesoAsignableContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoAsignacion.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CicloDumContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracionVariable.class
+com/mycompany/codexlatinuscompiler/gui/view/MainView.class
+com/mycompany/codexlatinuscompiler/symboltable/TablaSimbolos.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionMultiplicativaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ProgramaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionVariablesContext.class
@@ -25,6 +29,8 @@ com/mycompany/codexlatinuscompiler/ast/NodoRetorno.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ParametroContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CicloPerContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionStructDefContext.class
+com/mycompany/codexlatinuscompiler/symboltable/TablaTipos.class
+com/mycompany/codexlatinuscompiler/Compilador.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AtributoContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoInterrumpe.class
 com/mycompany/codexlatinuscompiler/ast/NodoLectura.class
@@ -33,7 +39,9 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$RetornoContext
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SentenciaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaAtributosContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracionArray.class
+com/mycompany/codexlatinuscompiler/gui/controller/MainController.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$TipoContext.class
+com/mycompany/codexlatinuscompiler/symboltable/Scope.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracionStructDef.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaExpresionesContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AsignacionContext.class
