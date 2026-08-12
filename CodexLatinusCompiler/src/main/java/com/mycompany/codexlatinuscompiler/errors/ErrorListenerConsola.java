@@ -4,6 +4,8 @@
  */
 package com.mycompany.codexlatinuscompiler.errors;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -12,10 +14,23 @@ import org.antlr.v4.runtime.Recognizer;
  * @author andy
  */
 public class ErrorListenerConsola extends BaseErrorListener {
+
+    private final List<String> errores = new ArrayList<>();
+
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
                              int line, int charPositionInLine,
                              String msg, RecognitionException e) {
-        System.err.println("Error sintáctico [línea " + line + ":" + charPositionInLine + "] " + msg);
+        String mensaje = "Error sintáctico [línea " + line + ":" + charPositionInLine + "] " + msg;
+        errores.add(mensaje);
+        System.err.println(mensaje);
+    }
+
+    public boolean tieneErrores() {
+        return !errores.isEmpty();
+    }
+
+    public List<String> getErrores() {
+        return errores;
     }
 }
