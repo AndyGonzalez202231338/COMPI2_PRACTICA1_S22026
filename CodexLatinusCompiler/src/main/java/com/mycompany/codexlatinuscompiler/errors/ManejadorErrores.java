@@ -25,4 +25,10 @@ public class ManejadorErrores {
     public List<String> getErrores() {
         return errores;
     }
+    
+    public void imprimirTodos() {
+        for (String err : errores) {
+            System.out.println(err);
+        }
+    }
 }
