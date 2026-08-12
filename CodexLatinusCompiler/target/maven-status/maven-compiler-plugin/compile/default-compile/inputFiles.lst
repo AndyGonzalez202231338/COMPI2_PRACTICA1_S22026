@@ -34,9 +34,11 @@
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoSi.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/ast/NodoUnaria.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/errors/ErrorListenerConsola.java
+/home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/errors/ManejadorErrores.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/gui/controller/MainController.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/gui/view/MainView.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/gui/view/SyntaxHighlighter.java
+/home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/semantic/AnalizadorSemantico.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/Scope.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/Simbolo.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/TablaSimbolos.java

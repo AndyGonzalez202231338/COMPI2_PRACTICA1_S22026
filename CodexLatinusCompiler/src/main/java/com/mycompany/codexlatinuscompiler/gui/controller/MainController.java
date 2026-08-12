@@ -127,6 +127,20 @@ public class MainController {
 
         view.setASTContent(new javafx.scene.control.TextArea(resultado.arbolTexto));
         view.setErrorsContent(new javafx.scene.control.Label("Sin errores."));
+        
+        if (!resultado.erroresSemanticos.isEmpty()) {
+            view.appendToConsole("[ERROR] Se encontraron errores semánticos:");
+            for (String e : resultado.erroresSemanticos) view.appendToConsole("  " + e);
+
+            view.setStatus("Errores semánticos encontrados", "#e74c3c");
+            view.setErrorsContent(new javafx.scene.control.TextArea(
+                    String.join("\n", resultado.erroresSemanticos)
+            ));
+        } else {
+            view.appendToConsole("[OK] Análisis semántico completado (Fase 1)");
+            view.setStatus("Análisis completado", "#2ecc71");
+            view.setErrorsContent(new javafx.scene.control.Label("Sin errores."));
+        }
 
         // Estas dos siguen pendientes hasta que conectemos AnalizadorSemantico
         view.setSymbolTableContent(new javafx.scene.control.Label("Tabla de símbolos (pendiente)."));

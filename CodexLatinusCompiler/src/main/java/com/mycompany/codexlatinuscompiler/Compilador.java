@@ -13,6 +13,10 @@ import java.util.ArrayList;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import com.mycompany.codexlatinuscompiler.semantic.AnalizadorSemantico;
+import com.mycompany.codexlatinuscompiler.symboltable.TablaSimbolos;
+import com.mycompany.codexlatinuscompiler.symboltable.TablaTipos;
+
 /**
  *
  * @author andy
@@ -26,14 +30,12 @@ public class Compilador {
         resultado.erroresSemanticos = new ArrayList<>();
 
         CharStream input = CharStreams.fromString(codigoFuente);
-
         CodexLatinusLexer lexer = new CodexLatinusLexer(input);
         ErrorListenerConsola lexerErrores = new ErrorListenerConsola();
         lexer.removeErrorListeners();
         lexer.addErrorListener(lexerErrores);
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-
         CodexLatinusParser parser = new CodexLatinusParser(tokens);
         ErrorListenerConsola parserErrores = new ErrorListenerConsola();
         parser.removeErrorListeners();
@@ -47,15 +49,21 @@ public class Compilador {
 
         if (lexerErrores.tieneErrores() || parserErrores.tieneErrores()) {
             resultado.exitoso = false;
-            return resultado; 
+            return resultado;
         }
 
         ASTBuilder builder = new ASTBuilder();
         resultado.ast = (NodoPrograma) builder.visit(arbol);
 
-        // TODO: aquí luego conectamos AnalizadorSemantico y llenamos
-        // resultado.erroresSemanticos; por ahora, si llegó hasta aquí, es válido.
-        resultado.exitoso = true;
+        // ---- Análisis semántico ----
+        AnalizadorSemantico semantico = new AnalizadorSemantico();
+        semantico.analizar(resultado.ast);
+
+        resultado.erroresSemanticos.addAll(semantico.getErrores().getErrores());
+        resultado.tablaSimbolos = semantico.getTabla();   
+        resultado.tablaTipos = semantico.getTipos(); 
+
+        resultado.exitoso = !semantico.getErrores().tieneErrores();
 
         return resultado;
     }
