@@ -44,6 +44,7 @@ com/mycompany/codexlatinuscompiler/gui/controller/MainController.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$TipoContext.class
 com/mycompany/codexlatinuscompiler/symboltable/Scope.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracionStructDef.class
+com/mycompany/codexlatinuscompiler/errors/ManejadorErrores.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaExpresionesContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AsignacionContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$FuncionContext.class
@@ -63,6 +64,7 @@ com/mycompany/codexlatinuscompiler/ast/NodoAST.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionAditivaContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoSi.class
 com/mycompany/codexlatinuscompiler/ast/NodoLiteralEstructura.class
+com/mycompany/codexlatinuscompiler/semantic/AnalizadorSemantico.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaAsignAtributosContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracion.class
 com/mycompany/codexlatinuscompiler/ast/NodoAliterIf.class

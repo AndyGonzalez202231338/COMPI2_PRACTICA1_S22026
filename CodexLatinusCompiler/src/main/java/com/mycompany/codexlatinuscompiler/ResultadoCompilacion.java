@@ -5,6 +5,8 @@
 package com.mycompany.codexlatinuscompiler;
 
 import com.mycompany.codexlatinuscompiler.ast.NodoPrograma;
+import com.mycompany.codexlatinuscompiler.symboltable.TablaSimbolos;
+import com.mycompany.codexlatinuscompiler.symboltable.TablaTipos;
 import java.util.List;
 
 /**
@@ -17,5 +19,8 @@ public class ResultadoCompilacion {
     public List<String> erroresLexicos;
     public List<String> erroresSintacticos;
     public List<String> erroresSemanticos; 
-    public String arbolTexto;              
+    public String arbolTexto; 
+    
+    public TablaSimbolos tablaSimbolos;
+    public TablaTipos tablaTipos; 
 }
