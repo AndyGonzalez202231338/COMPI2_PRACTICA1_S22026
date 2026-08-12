@@ -21,6 +21,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CicloDumContex
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracionVariable.class
 com/mycompany/codexlatinuscompiler/gui/view/MainView.class
 com/mycompany/codexlatinuscompiler/symboltable/TablaSimbolos.class
+com/mycompany/codexlatinuscompiler/gui/view/SyntaxHighlighter.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionMultiplicativaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ProgramaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionVariablesContext.class
@@ -72,6 +73,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CondicionalCon
 com/mycompany/codexlatinuscompiler/ast/NodoPrograma.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusListener.class
 com/mycompany/codexlatinuscompiler/ast/NodoPerge.class
+com/mycompany/codexlatinuscompiler/highlight/HighlightLexer.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$EscrituraContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoLlamadaFuncionSentencia.class
 com/mycompany/codexlatinuscompiler/ast/NodoLlamadaFuncion.class

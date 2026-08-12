@@ -1,0 +1,15 @@
+.code-area { -fx-background-color: #1e1e1e; }
+.text { -fx-fill: #d4d4d4; }
+
+.keyword     { -fx-fill: #6A0DAD; -fx-font-weight: bold; }
+.type        { -fx-fill: #00AA00; }
+.boolean     { -fx-fill: #FF8C00; }
+.operator    { -fx-fill: #CC0000; }
+.punct       { -fx-fill: #808080; }
+.string      { -fx-fill: #D4A017; }
+.comment     { -fx-fill: #808080; -fx-font-style: italic; }
+.number      { -fx-fill: #00CCFF; }
+.identifier  { -fx-fill: #FFFF99; }
+.default-text{ -fx-fill: #D4D4D4; }
+
+.lineno { -fx-text-fill: #858585; -fx-background-color: #252526; }

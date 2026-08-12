@@ -36,10 +36,12 @@
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/errors/ErrorListenerConsola.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/gui/controller/MainController.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/gui/view/MainView.java
+/home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/gui/view/SyntaxHighlighter.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/Scope.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/Simbolo.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/TablaSimbolos.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/src/main/java/com/mycompany/codexlatinuscompiler/symboltable/TablaTipos.java
+/home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/highlight/HighlightLexer.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusBaseListener.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusBaseVisitor.java
 /home/andy/Escritorio/Programas/Ingenería/Ingenería/SextoSemestre/Compi2/Compi2_Practica1_S2026/CodexLatinusCompiler/target/generated-sources/antlr4/com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusLexer.java

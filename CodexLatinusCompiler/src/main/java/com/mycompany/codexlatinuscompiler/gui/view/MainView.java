@@ -5,6 +5,7 @@
 package com.mycompany.codexlatinuscompiler.gui.view;
 
 import com.mycompany.codexlatinuscompiler.gui.controller.MainController;
+import java.time.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -14,6 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 /**
  *
  * @author andy
@@ -21,9 +25,10 @@ import javafx.scene.text.Text;
 public class MainView extends BorderPane {
 
     private final MainController controller;
+    private SyntaxHighlighter syntaxHighlighter;
 
     // Componentes que necesitaremos actualizar desde el controlador
-    private TextArea editorTextArea;
+    private CodeArea editorCodeArea;
     private TextArea consoleTextArea;
     private TabPane resultsTabPane;
     private Label statusLabel;
@@ -93,9 +98,9 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
         MenuItem itemCortar = new MenuItem("Cortar");
         MenuItem itemCopiar = new MenuItem("Copiar");
         MenuItem itemPegar = new MenuItem("Pegar");
-        itemCortar.setOnAction(e -> editorTextArea.cut());
-        itemCopiar.setOnAction(e -> editorTextArea.copy());
-        itemPegar.setOnAction(e -> editorTextArea.paste());
+        itemCortar.setOnAction(e -> editorCodeArea.cut());
+        itemCopiar.setOnAction(e -> editorCodeArea.copy());
+        itemPegar.setOnAction(e -> editorCodeArea.paste());
         menuEditar.getItems().addAll(itemCortar, itemCopiar, itemPegar);
 
         // Menú Analizar
@@ -201,79 +206,31 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
         Label lblEditor = new Label("CÓDIGO FUENTE (.lat)");
         lblEditor.setFont(Font.font("Arial", FontWeight.BOLD, 14));
 
-        // --- Números de línea ---
-        Text lineNumbers = new Text();
-        lineNumbers.setFont(Font.font("Consolas", 14));
-        lineNumbers.setFill(Color.GRAY);
-        lineNumbers.setText("1\n");
+        // --- CodeArea reemplaza al TextArea: soporta estilos por rango + números de línea nativos ---
+        CodeArea codeEditor = new CodeArea();
+        codeEditor.setParagraphGraphicFactory(LineNumberFactory.get(codeEditor));
+        codeEditor.getStylesheets().add(getClass().getResource("/styles/syntax-highlighting.css").toExternalForm());
+        codeEditor.setStyle("-fx-font-family: Consolas; -fx-font-size: 14px;");
 
-        VBox lineNumbersBox = new VBox(lineNumbers);
-        lineNumbersBox.setPadding(new Insets(4, 5, 4, 5));
-        lineNumbersBox.setStyle("-fx-background-color: #252526;");
-        lineNumbersBox.setMinWidth(30);
-        lineNumbersBox.setMaxHeight(Double.MAX_VALUE);
+        VirtualizedScrollPane<CodeArea> scrollableEditor = new VirtualizedScrollPane<>(codeEditor);
+        VBox.setVgrow(scrollableEditor, Priority.ALWAYS);
+        scrollableEditor.setMaxWidth(Double.MAX_VALUE);
+        scrollableEditor.setMaxHeight(Double.MAX_VALUE);
 
-        // Envolvemos los números en su propio ScrollPane, sin scrollbars visibles,
-        // que moveremos "a mano" sincronizado con el scroll del editor.
-        ScrollPane lineNumberScrollPane = new ScrollPane(lineNumbersBox);
-        lineNumberScrollPane.setFitToWidth(true);
-        lineNumberScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        lineNumberScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        lineNumberScrollPane.setStyle("-fx-background-color: #252526; -fx-background: #252526;");
-        lineNumberScrollPane.setPrefWidth(35);
-        lineNumberScrollPane.setMinWidth(35);
-        lineNumberScrollPane.setMaxWidth(35);
-        lineNumberScrollPane.setMaxHeight(Double.MAX_VALUE);
-        // El TextArea no debe capturar scroll de esta zona; no es interactivo
-        lineNumberScrollPane.setPannable(false);
+        // --- Resaltado en hilo aparte, con debounce para no lanzar un hilo por cada tecla ---
+        syntaxHighlighter = new SyntaxHighlighter(codeEditor);
+        codeEditor.plainTextChanges()
+            .successionEnds(Duration.ofMillis(150)) // espera breve pausa al escribir
+            .subscribe(change -> syntaxHighlighter.requestHighlight(codeEditor.getText()));
 
-        // --- Editor de texto ---
-        editorTextArea = new TextArea();
-        editorTextArea.setFont(Font.font("Consolas", 14));
-        editorTextArea.setWrapText(false); // Sin salto de línea horizontal
-        editorTextArea.setStyle("-fx-control-inner-background: #1e1e1e; -fx-text-fill: #d4d4d4;");
+        panel.getChildren().addAll(lblEditor, scrollableEditor);
 
-        editorTextArea.setMinWidth(0);
-        editorTextArea.setMinHeight(0);
-        editorTextArea.setMaxWidth(Double.MAX_VALUE);
-        editorTextArea.setMaxHeight(Double.MAX_VALUE);
-        HBox.setHgrow(editorTextArea, Priority.ALWAYS);
-
-        // --- Sincronizar el scroll vertical del editor con los números de línea ---
-        editorTextArea.skinProperty().addListener((obs, oldSkin, newSkin) -> {
-            if (newSkin != null) {
-                ScrollPane internalScrollPane = (ScrollPane) editorTextArea.lookup(".scroll-pane");
-                if (internalScrollPane != null) {
-                    internalScrollPane.vvalueProperty().addListener((o, oldVal, newVal) ->
-                        lineNumberScrollPane.setVvalue(newVal.doubleValue())
-                    );
-                }
-            }
-        });
-
-        // --- Contenedor HBox (números + editor) ---
-        HBox editorContainer = new HBox(lineNumberScrollPane, editorTextArea);
-        editorContainer.setMinWidth(0);
-        editorContainer.setMinHeight(0);
-        editorContainer.setMaxWidth(Double.MAX_VALUE);
-        editorContainer.setMaxHeight(Double.MAX_VALUE);
-        editorContainer.setFillHeight(true);
-        VBox.setVgrow(editorContainer, Priority.ALWAYS);
-
-        panel.getChildren().addAll(lblEditor, editorContainer);
-
-        // --- Actualizar números al cambiar el texto ---
-        editorTextArea.textProperty().addListener((obs, oldText, newText) -> {
-            int lines = newText.split("\n", -1).length;
-            StringBuilder sb = new StringBuilder();
-            for (int i = 1; i <= lines; i++) {
-                sb.append(i).append("\n");
-            }
-            lineNumbers.setText(sb.toString());
-        });
+        // Guarda referencia si otras partes del código usaban getSourceCode()/setSourceCode()
+        this.editorCodeArea = codeEditor; // ver nota abajo sobre reemplazar editorTextArea
 
         return panel;
     }
+    
     private VBox createResultsPanel() {
         VBox panel = new VBox();
         panel.setPadding(new Insets(5));
@@ -338,11 +295,11 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
     // ---------- Métodos públicos para actualizar la vista desde el controlador ----------
 
     public String getSourceCode() {
-        return editorTextArea.getText();
+        return editorCodeArea.getText();
     }
 
     public void setSourceCode(String code) {
-        editorTextArea.setText(code);
+        editorCodeArea.replaceText(code);
     }
 
     public void appendToConsole(String message) {
