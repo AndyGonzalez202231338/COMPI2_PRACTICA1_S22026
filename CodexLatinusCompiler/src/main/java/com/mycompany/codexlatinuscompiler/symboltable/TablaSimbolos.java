@@ -4,6 +4,9 @@
  */
 package com.mycompany.codexlatinuscompiler.symboltable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author andy
@@ -11,14 +14,15 @@ package com.mycompany.codexlatinuscompiler.symboltable;
 public class TablaSimbolos {
     private Scope actual;
     private final Scope global;
+    private int contadorScopes = 0;
 
     public TablaSimbolos() {
-        global = new Scope(null);
+        global = new Scope(null, 0);
         actual = global;
     }
 
     public void entrarScope() {
-        actual = new Scope(actual);
+        actual = new Scope(actual, ++contadorScopes);
     }
 
     public void salirScope() {

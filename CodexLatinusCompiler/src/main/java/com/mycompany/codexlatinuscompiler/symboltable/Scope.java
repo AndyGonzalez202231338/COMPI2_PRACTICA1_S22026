@@ -4,8 +4,10 @@
  */
 package com.mycompany.codexlatinuscompiler.symboltable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -15,9 +17,15 @@ import java.util.Map;
 public class Scope {
     private final Map<String, Simbolo> simbolos = new LinkedHashMap<>();
     private final Scope padre; // null si es el scope global
+    private final List<Scope> hijos = new ArrayList<>();
+    private final int id;
 
-    public Scope(Scope padre) {
+    public Scope(Scope padre, int id) {
         this.padre = padre;
+        this.id = id;
+        if (padre != null) {
+            padre.hijos.add(this);
+        }
     }
 
     /** 
@@ -39,15 +47,16 @@ public class Scope {
         return null;
     }
 
-    /** 
-     * Busca SOLO en este scope (útil para validar redeclaración exacta). 
-     */
-    public Simbolo resolverLocal(String nombre) {
-        return simbolos.get(nombre);
-    }
-
     public Scope getPadre() {
         return padre;
+    }
+
+    public List<Scope> getHijos() {
+        return hijos;
+    }
+    
+    public int getId() {
+        return id;
     }
 
     public Collection<Simbolo> simbolosLocales() {

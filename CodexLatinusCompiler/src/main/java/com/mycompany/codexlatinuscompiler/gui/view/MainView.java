@@ -8,6 +8,7 @@ import com.mycompany.codexlatinuscompiler.gui.controller.MainController;
 import java.time.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -85,13 +86,16 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
         MenuItem itemAbrir = new MenuItem("Abrir .lat");
         MenuItem itemGuardar = new MenuItem("Guardar");
         MenuItem itemGuardarComo = new MenuItem("Guardar como");
+        MenuItem itemExportarAST = new MenuItem("Exportar AST");
         MenuItem itemSalir = new MenuItem("Salir");
         itemNuevo.setOnAction(e -> controller.nuevoArchivo());
         itemAbrir.setOnAction(e -> controller.abrirArchivo());
         itemGuardar.setOnAction(e -> controller.guardarArchivo());
         itemGuardarComo.setOnAction(e -> controller.guardarComo());
+        itemExportarAST.setOnAction(e -> controller.exportarAST());
         itemSalir.setOnAction(e -> controller.salir());
-        menuArchivo.getItems().addAll(itemNuevo, itemAbrir, itemGuardar, itemGuardarComo, new SeparatorMenuItem(), itemSalir);
+        menuArchivo.getItems().addAll(itemNuevo, itemAbrir, itemGuardar, itemGuardarComo, new SeparatorMenuItem(), itemExportarAST,itemSalir);
+        //menuArchivo.getItems().add(itemExportarAST);
 
         // Menú Editar
         Menu menuEditar = new Menu("Editar");
@@ -321,7 +325,19 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
 
     // Métodos para actualizar cada pestaña (serán llamados desde el controlador)
     public void setASTContent(Node content) {
-        resultsTabPane.getTabs().get(0).setContent(content);
+        StackPane stack = new StackPane();
+        stack.getChildren().add(content);
+
+        // Botón para exportar la imagen
+        Button btnExport = new Button("💾 Exportar imagen");
+        btnExport.setOnAction(e -> controller.exportarASTGrafico());
+        btnExport.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white; " +
+                           "-fx-font-size: 12px; -fx-padding: 5 10 5 10;");
+        StackPane.setAlignment(btnExport, Pos.TOP_RIGHT);
+        StackPane.setMargin(btnExport, new Insets(10));
+
+        stack.getChildren().add(btnExport);
+        resultsTabPane.getTabs().get(0).setContent(stack);
     }
 
     public void setSymbolTableContent(Node content) {

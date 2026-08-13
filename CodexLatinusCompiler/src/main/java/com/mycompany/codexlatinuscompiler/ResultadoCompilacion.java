@@ -23,4 +23,21 @@ public class ResultadoCompilacion {
     
     public TablaSimbolos tablaSimbolos;
     public TablaTipos tablaTipos; 
+
+    public NodoPrograma getAst() {
+        return ast;
+    }
+
+    public void setAst(NodoPrograma ast) {
+        this.ast = ast;
+    }
+
+    public TablaSimbolos getTablaSimbolos() {
+        return tablaSimbolos;
+    }
+
+    public TablaTipos getTablaTipos() {
+        return tablaTipos;
+    }
+    
 }
