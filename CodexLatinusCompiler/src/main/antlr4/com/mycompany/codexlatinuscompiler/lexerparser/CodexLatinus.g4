@@ -44,13 +44,13 @@ listaAtributos
     ;
 
 atributo
-    : ESTO? ID COLON tipo
+    : ESTO ID COLON tipo
     | SERIES ID COLON tipo
-    | ESTO? ID COLON (VERUM | FALSUS)
+    | ESTO ID COLON (VERUM | FALSUS)
     ;
 
 declaracionStructVar
-    : ESTO ID COLON ID literalEstructura SEMI
+    : ESTO ID COLON ID literalEstructura
     ;
 
 literalEstructura
@@ -81,6 +81,7 @@ tipoPrimitivo
     | TEXTUM
     | DECIMALIS
     | LITTERA
+    | BOOL
     ;
 
 sentencia
@@ -105,7 +106,7 @@ retorno
 
 asignacion
     : accesoAsignable ASSIGN expresion SEMI
-    | accesoAsignable ASSIGN literalEstructura SEMI
+    | accesoAsignable ASSIGN literalEstructura 
     ;
 
 accesoAsignable
@@ -197,6 +198,7 @@ expresionMultiplicativa
 
 expresionUnaria
     : NON expresionUnaria
+    | MINUS expresionUnaria
     | (INC | DEC) primario
     | primario (INC | DEC)?
     ;
@@ -247,6 +249,7 @@ DECIMALIS : 'decimalis';
 LITTERA   : 'littera';
 VERUM     : 'verum';
 FALSUS    : 'falsus';
+BOOL      : 'bool';
 
 // Operadores multi-carácter ANTES que los de un carácter
 EQ   : '==';

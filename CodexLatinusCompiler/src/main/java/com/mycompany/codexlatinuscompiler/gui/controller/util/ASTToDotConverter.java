@@ -20,18 +20,25 @@ public class ASTToDotConverter {
     public String convertir(NodoAST nodo) {
         dot = new StringBuilder();
         dot.append("digraph AST {\n");
-        dot.append(INDENT).append("node [shape=box, style=filled, fillcolor=lightblue];\n");
-        dot.append(INDENT).append("edge [color=gray];\n");
+        dot.append(INDENT).append("graph [nodesep=0.6, ranksep=1.0, rankdir=TB, splines=ortho];\n");
+        dot.append(INDENT).append("node [shape=box, style=filled, fillcolor=lightblue, fontsize=11, margin=\"0.15,0.1\"];\n");
+        dot.append(INDENT).append("edge [color=gray, fontsize=9];\n");
         
         if (nodo != null) {
-            convertirNodo(nodo, null);
+            convertirNodo(nodo);
         }
         
         dot.append("}\n");
         return dot.toString();
     }
     
-    private String convertirNodo(NodoAST nodo, String parentId) {
+    /**
+     * Crea el nodo DOT para {@code nodo} y, recursivamente, los de sus hijos.
+     * IMPORTANTE: este método NO dibuja la arista hacia el padre; eso lo hace
+     * quien lo llama (con o sin etiqueta, según corresponda), para no duplicar
+     * la arista.
+     */
+    private String convertirNodo(NodoAST nodo) {
         if (nodo == null) return null;
         
         String nodeId = "n" + (nodeCounter++);
@@ -64,12 +71,6 @@ public class ASTToDotConverter {
         dot.append(INDENT).append(nodeId)
            .append(" [label=\"").append(label).append("\"];\n");
         
-        // Conectar con el padre
-        if (parentId != null) {
-            dot.append(INDENT).append(parentId)
-               .append(" -> ").append(nodeId).append(";\n");
-        }
-        
         // Procesar hijos
         for (Field f : fields) {
             f.setAccessible(true);
@@ -82,9 +83,9 @@ public class ASTToDotConverter {
                 
                 // Si es NodoAST
                 if (NodoAST.class.isAssignableFrom(type)) {
-                    String childId = convertirNodo((NodoAST) value, nodeId);
+                    String childId = convertirNodo((NodoAST) value);
                     if (childId != null) {
-                        // Agregar etiqueta al borde
+                        // Una sola arista, con la etiqueta del nombre del campo
                         dot.append(INDENT).append(nodeId)
                            .append(" -> ").append(childId)
                            .append(" [label=\"").append(f.getName()).append("\"];\n");
@@ -101,9 +102,11 @@ public class ASTToDotConverter {
                            .append(" -> ").append(containerId).append(";\n");
                         for (Object elem : list) {
                             if (elem instanceof NodoAST) {
-                                String childId = convertirNodo((NodoAST) elem, containerId);
+                                String childId = convertirNodo((NodoAST) elem);
                                 if (childId != null) {
-                                    // No agregamos etiqueta para elementos de lista
+                                    // Una sola arista, sin etiqueta, para elementos de lista
+                                    dot.append(INDENT).append(containerId)
+                                       .append(" -> ").append(childId).append(";\n");
                                 }
                             }
                         }

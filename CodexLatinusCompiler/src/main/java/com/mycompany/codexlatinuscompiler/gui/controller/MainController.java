@@ -11,6 +11,7 @@ import com.mycompany.codexlatinuscompiler.gui.controller.util.ASTGraphvizViewer;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.ASTToDotConverter;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.ASTTreeConverter;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.TablaSimbolosViewer;
+import com.mycompany.codexlatinuscompiler.gui.util.TipoMensaje;
 import com.mycompany.codexlatinuscompiler.gui.view.MainView;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
@@ -49,11 +50,18 @@ public class MainController {
     }
 
     // ---------- Acciones de Archivo ----------
+//    public void nuevoArchivo() {
+//        view.setSourceCode("");
+//        currentFile = null;
+//        view.setStatus("Nuevo archivo", "#f39c12");
+//        view.appendToConsole("[INFO] Nuevo archivo creado.");
+//    }
+    
     public void nuevoArchivo() {
         view.setSourceCode("");
         currentFile = null;
         view.setStatus("Nuevo archivo", "#f39c12");
-        view.appendToConsole("[INFO] Nuevo archivo creado.");
+        view.appendMessage("[INFO] Nuevo archivo creado.", TipoMensaje.INFO);
     }
 
     public void abrirArchivo() {
@@ -114,71 +122,144 @@ public class MainController {
     }
 
     // ---------- Acción de Análisis ----------
+//    public void analizarCodigo() {
+//        String code = view.getSourceCode();
+//        if (code.trim().isEmpty()) {
+//            view.appendToConsole("[ERROR] No hay código para analizar.");
+//            return;
+//        }
+//        view.clearConsole();
+//        view.appendToConsole("[INFO] Iniciando análisis...");
+//
+//        ResultadoCompilacion resultado = compilador.compilar(code);
+//
+//        // --- 1. Errores léxicos/sintácticos: cortar aquí ---
+//        if (!resultado.erroresLexicos.isEmpty() || !resultado.erroresSintacticos.isEmpty()) {
+//            view.appendToConsole("[ERROR] Se encontraron errores de análisis léxico/sintáctico:");
+//            for (String e : resultado.erroresLexicos) view.appendToConsole("  " + e);
+//            for (String e : resultado.erroresSintacticos) view.appendToConsole("  " + e);
+//
+//            view.setStatus("Errores encontrados", "#e74c3c");
+//            view.setErrorsContent(new TextArea(
+//                    String.join("\n", resultado.erroresLexicos) + "\n" +
+//                    String.join("\n", resultado.erroresSintacticos)
+//            ));
+//            view.setASTContent(new Label("No disponible: hay errores léxicos/sintácticos."));
+//            view.setSymbolTableContent(new Label("No disponible: hay errores léxicos/sintácticos."));
+//            return;
+//        }
+//
+//        view.appendToConsole("[OK] Análisis léxico completado");
+//        view.appendToConsole("[OK] Análisis sintáctico completado");
+//
+//        // --- 2. Errores semánticos: cortar aquí también, ANTES de graficar nada ---
+//        if (!resultado.erroresSemanticos.isEmpty()) {
+//            view.appendToConsole("[ERROR] Se encontraron errores semánticos:");
+//            for (String e : resultado.erroresSemanticos) view.appendToConsole("  " + e);
+//
+//            view.setStatus("Errores semánticos encontrados", "#e74c3c");
+//            view.setErrorsContent(new TextArea(
+//                    String.join("\n", resultado.erroresSemanticos)
+//            ));
+//            view.setASTContent(new Label("No disponible: el lenguaje no es válido (hay errores semánticos)."));
+//            view.setSymbolTableContent(new Label("No disponible: el lenguaje no es válido (hay errores semánticos)."));
+//            return;
+//        }
+//
+//        // --- 3. Solo llegamos aquí si TODO pasó: ahora sí graficamos ---
+//        view.appendToConsole("[OK] Análisis semántico completado");
+//        view.setStatus("Análisis completado", "#2ecc71");
+//        view.setErrorsContent(new Label("Sin errores."));
+//
+//        if (resultado.getAst() != null) {
+//            view.appendToConsole("[OK] AST generado");
+//            Node astGraph = ASTGraphvizViewer.crearVistaAST(resultado.getAst());
+//            view.setASTContent(astGraph);
+//        } else {
+//            view.appendToConsole("[WARN] No se generó AST");
+//            view.setASTContent(new Label("No se pudo generar AST."));
+//        }
+//
+//        if (resultado.getTablaSimbolos() != null) {
+//            view.setSymbolTableContent(TablaSimbolosViewer.crear(resultado.getTablaSimbolos()));
+//        }
+//
+//        view.setStackContent(new Label("Pila de procesos (pendiente)."));
+//    }
+    
     public void analizarCodigo() {
         String code = view.getSourceCode();
         if (code.trim().isEmpty()) {
-            view.appendToConsole("[ERROR] No hay código para analizar.");
+            view.appendMessage("[ERROR] No hay código para analizar.", TipoMensaje.ERROR_SEMANTICO);
             return;
         }
         view.clearConsole();
-        view.appendToConsole("[INFO] Iniciando análisis...");
+        view.appendMessage("[INFO] Iniciando análisis...", TipoMensaje.INFO);
 
         ResultadoCompilacion resultado = compilador.compilar(code);
 
+        // --- 1. Errores léxicos/sintácticos ---
         if (!resultado.erroresLexicos.isEmpty() || !resultado.erroresSintacticos.isEmpty()) {
-            view.appendToConsole("[ERROR] Se encontraron errores de análisis léxico/sintáctico:");
-            for (String e : resultado.erroresLexicos) view.appendToConsole("  " + e);
-            for (String e : resultado.erroresSintacticos) view.appendToConsole("  " + e);
+            view.appendMessage("[ERROR] Se encontraron errores de análisis léxico/sintáctico:", TipoMensaje.ERROR_SEMANTICO);
+            for (String e : resultado.erroresLexicos) {
+                view.appendMessage("  " + e, TipoMensaje.ERROR_LEXICO);
+            }
+            for (String e : resultado.erroresSintacticos) {
+                view.appendMessage("  " + e, TipoMensaje.ERROR_SINTACTICO);
+            }
 
             view.setStatus("Errores encontrados", "#e74c3c");
-            view.setErrorsContent(new javafx.scene.control.TextArea(
+            view.setErrorsContent(new TextArea(
                     String.join("\n", resultado.erroresLexicos) + "\n" +
                     String.join("\n", resultado.erroresSintacticos)
             ));
+            view.setASTContent(new Label("No disponible: hay errores léxicos/sintácticos."));
+            view.setSymbolTableContent(new Label("No disponible: hay errores léxicos/sintácticos."));
             return;
         }
 
-        view.appendToConsole("[OK] Análisis léxico completado");
-        view.appendToConsole("[OK] Análisis sintáctico completado");
+        view.appendMessage("[OK] Análisis léxico completado", TipoMensaje.INFO);
+        view.appendMessage("[OK] Análisis sintáctico completado", TipoMensaje.INFO);
 
-        // --- PRIMERO: Verificar si hay AST ---
-        if (resultado.getAst() != null) {
-            view.appendToConsole("[OK] AST generado");
-            // Generar la imagen del AST
-            Node astGraph = ASTGraphvizViewer.crearVistaAST(resultado.getAst());
-            view.setASTContent(astGraph);
-        } else {
-            view.appendToConsole("[WARN] No se generó AST");
-            view.setASTContent(new Label("No se pudo generar AST."));
-        }
-
-        view.setErrorsContent(new Label("Sin errores."));
-
-        // --- ANÁLISIS SEMÁNTICO ---
+        // --- 2. Errores semánticos ---
         if (!resultado.erroresSemanticos.isEmpty()) {
-            view.appendToConsole("[ERROR] Se encontraron errores semánticos:");
-            for (String e : resultado.erroresSemanticos) view.appendToConsole("  " + e);
+            view.appendMessage("[ERROR] Se encontraron errores semánticos:", TipoMensaje.ERROR_SEMANTICO);
+            for (String e : resultado.erroresSemanticos) {
+                view.appendMessage("  " + e, TipoMensaje.ERROR_SEMANTICO);
+            }
 
             view.setStatus("Errores semánticos encontrados", "#e74c3c");
             view.setErrorsContent(new TextArea(
                     String.join("\n", resultado.erroresSemanticos)
             ));
-        } else {
-            view.appendToConsole("[OK] Análisis semántico completado (Fase 1)");
-            view.setStatus("Análisis completado", "#2ecc71");
-            view.setErrorsContent(new Label("Sin errores."));
+            view.setASTContent(new Label("No disponible: el lenguaje no es válido (hay errores semánticos)."));
+            view.setSymbolTableContent(new Label("No disponible: el lenguaje no es válido (hay errores semánticos)."));
+            return;
         }
-        
-        if (resultado.getTablaSimbolos()!= null) {
+
+        // --- 3. Todo OK ---
+        view.appendMessage("[OK] Análisis semántico completado", TipoMensaje.INFO);
+        view.setStatus("Análisis completado", "#2ecc71");
+        view.setErrorsContent(new Label("Sin errores."));
+
+        if (resultado.getAst() != null) {
+            view.appendMessage("[OK] AST generado", TipoMensaje.INFO);
+            Node astGraph = ASTGraphvizViewer.crearVistaAST(resultado.getAst());
+            view.setASTContent(astGraph);
+        } else {
+            view.appendMessage("[WARN] No se generó AST", TipoMensaje.INFO);
+            view.setASTContent(new Label("No se pudo generar AST."));
+        }
+
+        if (resultado.getTablaSimbolos() != null) {
             view.setSymbolTableContent(
-                TablaSimbolosViewer.crear(resultado.getTablaSimbolos())
+                TablaSimbolosViewer.crear(resultado.getTablaSimbolos(), resultado.getTablaTipos())
             );
         }
 
-        // Pestañas pendientes
-        //view.setSymbolTableContent(new Label("Tabla de símbolos (pendiente)."));
         view.setStackContent(new Label("Pila de procesos (pendiente)."));
     }
+    
 
     // ---------- Acciones de Visualización ----------
     public void mostrarAST() {

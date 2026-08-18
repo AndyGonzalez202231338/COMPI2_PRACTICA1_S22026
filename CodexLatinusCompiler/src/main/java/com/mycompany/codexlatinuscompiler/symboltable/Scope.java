@@ -16,18 +16,17 @@ import java.util.Map;
  */
 public class Scope {
     private final Map<String, Simbolo> simbolos = new LinkedHashMap<>();
-    private final Scope padre; // null si es el scope global
+    private final Scope padre;
     private final List<Scope> hijos = new ArrayList<>();
-    private final int id;
+    private final String descripcion;
 
-    public Scope(Scope padre, int id) {
+    public Scope(Scope padre, String descripcion, boolean persistente) {
         this.padre = padre;
-        this.id = id;
-        if (padre != null) {
+        this.descripcion = descripcion;
+        if (padre != null && persistente) {
             padre.hijos.add(this);
         }
     }
-
     /** 
      * Declara en ESTE scope. Retorna false si ya existía aquí mismo (redeclaración). 
      */
@@ -54,9 +53,9 @@ public class Scope {
     public List<Scope> getHijos() {
         return hijos;
     }
-    
-    public int getId() {
-        return id;
+
+    public String getDescripcion() {
+        return descripcion;
     }
 
     public Collection<Simbolo> simbolosLocales() {

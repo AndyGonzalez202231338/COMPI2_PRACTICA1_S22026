@@ -22,18 +22,25 @@ public class AnalizadorSemantico {
     private final AnalizadorFase1 fase1;
     private final AnalizadorFase2 fase2;
     private final AnalizadorFase3 fase3;
+    private final AnalizadorFase4 fase4;
+    private final AnalizadorFase5 fase5;
 
     public AnalizadorSemantico() {
         this.fase1 = new AnalizadorFase1(tabla, tipos, errores);
         this.fase2 = new AnalizadorFase2(tabla, tipos, errores, contexto);
         this.fase3 = new AnalizadorFase3(tabla, tipos, errores);
+        this.fase4 = new AnalizadorFase4(tabla, tipos, errores);
+        this.fase5 = new AnalizadorFase5(tabla, tipos, errores);
+        
     }
 
     public void analizar(NodoPrograma programa) {
         fase1.analizar(programa);
         fase2.analizar(programa);
         fase3.analizar(programa);
-
+        fase4.analizar(programa);
+        fase5.analizar(programa);
+        
         if (errores.tieneErrores()) {
             errores.imprimirTodos();
         }

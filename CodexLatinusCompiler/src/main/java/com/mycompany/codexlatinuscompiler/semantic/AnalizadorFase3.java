@@ -9,7 +9,6 @@ import com.mycompany.codexlatinuscompiler.errors.ManejadorErrores;
 import com.mycompany.codexlatinuscompiler.symboltable.*;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -20,14 +19,7 @@ public class AnalizadorFase3 {
     private final TablaSimbolos tabla;
     private final TablaTipos tipos;
     private final ManejadorErrores errores;
-
-    private static final Map<String, Integer> JERARQUIA = Map.of(
-            "textum", 5,
-            "decimalis", 4,
-            "numerus", 3,
-            "littera", 2,
-            "booleano", 1
-    );
+    private EvaluadorConstantes evaluarConstante;
 
     public AnalizadorFase3(TablaSimbolos tabla, TablaTipos tipos, ManejadorErrores errores) {
         this.tabla = tabla;
@@ -52,7 +44,7 @@ public class AnalizadorFase3 {
     }
 
     private void verificarFuncion(NodoFuncion f) {
-        tabla.entrarScope();
+        tabla.entrarScopeTemporal();
 
         for (NodoParametro p : f.parametros) {
             Simbolo s = new Simbolo();
@@ -105,7 +97,7 @@ public class AnalizadorFase3 {
     /** Igual que Fase 2's analizarBloque: abre scope, recorre, cierra scope. */
     private void verificarBloque(List<NodoAST> sentencias) {
         if (sentencias == null || sentencias.isEmpty()) return;
-        tabla.entrarScope();
+        tabla.entrarScopeTemporal();
         for (NodoAST sent : sentencias) {
             verificarSentencia(sent);
         }
@@ -126,7 +118,7 @@ public class AnalizadorFase3 {
 
     /** Mismo patrón de doble scope que Fase 2's analizarPer: uno para el iterador, otro para el cuerpo. */
     private void verificarPer(NodoPer p) {
-        tabla.entrarScope();
+        tabla.entrarScopeTemporal();
 
         if (p.inicializacion != null) {
             Simbolo s = new Simbolo();
@@ -173,7 +165,7 @@ public class AnalizadorFase3 {
             s.nombre = d.nombre;
             s.tipo = d.tipo;
             s.esArreglo = true;
-            s.tamanoArreglo = evaluarConstante(d.tamano);
+            s.tamanoArreglo = EvaluadorConstantes.evaluar(d.tamano);
             s.linea = d.linea;
             tabla.declarar(s);
             verificarDeclaracionArray(d);
@@ -253,7 +245,7 @@ public class AnalizadorFase3 {
             }
         }
 
-        Integer tamanoConst = evaluarConstante(d.tamano);
+        Integer tamanoConst = EvaluadorConstantes.evaluar(d.tamano);
         if (tamanoConst != null && d.valoresIniciales.size() > tamanoConst) {
             errores.reportar("El arreglo '" + d.nombre + "' declara tamaño " + tamanoConst +
                     " pero recibe " + d.valoresIniciales.size() + " valores", d.linea);
@@ -283,7 +275,7 @@ public class AnalizadorFase3 {
         Simbolo s = tabla.resolver(id.nombre);
         if (s == null || s.tamanoArreglo == null) return;
 
-        Integer indiceConst = evaluarConstante(acc.indice);
+        Integer indiceConst = EvaluadorConstantes.evaluar(acc.indice);
         if (indiceConst != null && (indiceConst < 0 || indiceConst >= s.tamanoArreglo)) {
             errores.reportar("Índice fuera de rango para '" + id.nombre +
                     "': tamaño declarado " + s.tamanoArreglo + ", índice " + indiceConst,
@@ -378,7 +370,7 @@ public class AnalizadorFase3 {
         String tipoDer = inferirTipo(b.derecha);
         if (tipoIzq == null || tipoDer == null) return null;
 
-        boolean esRelacionalOLogico = List.of("==", "!=", "<", ">", "&&", "||").contains(b.operador);
+        boolean esRelacionalOLogico = List.of("==", "!=", "<", ">", "<=", ">=", "&&", "||").contains(b.operador);
         if (esRelacionalOLogico) {
             if (b.operador.equals("&&") || b.operador.equals("||")) {
                 if (!tipoIzq.equals("booleano") || !tipoDer.equals("booleano")) {
@@ -400,18 +392,15 @@ public class AnalizadorFase3 {
             return "textum";
         }
 
-        if (!JERARQUIA.containsKey(tipoIzq) || !JERARQUIA.containsKey(tipoDer)) {
+        if (!TipoDato.esPrimitivo(tipoIzq) || !TipoDato.esPrimitivo(tipoDer)) {
             errores.reportar("Tipos no compatibles en operación: '" + tipoIzq +
                     "' y '" + tipoDer + "'", b.linea);
             return null;
         }
 
-        return JERARQUIA.get(tipoIzq) >= JERARQUIA.get(tipoDer) ? tipoIzq : tipoDer;
+        return TipoDato.masAlto(tipoIzq, tipoDer);
     }
 
-    // ============================================
-    // HELPERS
-    // ============================================
     private boolean esNumerico(String tipo) {
         return tipo.equals("numerus") || tipo.equals("decimalis");
     }
@@ -421,24 +410,5 @@ public class AnalizadorFase3 {
         if (tipoDestino.equals(tipoValor)) return true;
         if (tipoDestino.equals("textum")) return true;
         return false;
-    }
-
-    private Integer evaluarConstante(NodoAST expr) {
-        if (expr instanceof NodoLiteral lit && "numerus".equals(lit.tipoInferido)) {
-            return (Integer) lit.valor;
-        }
-        if (expr instanceof NodoBinaria b) {
-            Integer izq = evaluarConstante(b.izquierda);
-            Integer der = evaluarConstante(b.derecha);
-            if (izq == null || der == null) return null;
-            return switch (b.operador) {
-                case "+" -> izq + der;
-                case "-" -> izq - der;
-                case "*" -> izq * der;
-                case "/" -> der != 0 ? izq / der : null;
-                default -> null;
-            };
-        }
-        return null;
     }
 }

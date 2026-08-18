@@ -12,9 +12,8 @@ import java.util.List;
  */
 public class Simbolo {
     public String nombre;
-    public String tipo; // "numerus", "textum", "decimalis", "littera", "booleano",
-                        // o el nombre de una struct (ej. "Persona")
-
+    public String tipo; // "numerus", "textum", "decimalis", "littera", "booleano", o el nombre de una struct (ej. "Persona")
+    
     public int linea;                 // dónde se declaró, para mensajes de error
 
     public boolean esArreglo;
@@ -26,6 +25,8 @@ public class Simbolo {
     public boolean esFuncion;
     public String tipoRetorno;        // null si es "actio" (sin retorno)
     public List<Simbolo> parametros;  // solo si esFuncion == true
+    
+    public boolean esParametro;
 
     @Override
     public String toString() {
