@@ -4,6 +4,7 @@
  */
 package com.mycompany.codexlatinuscompiler.symboltable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +16,8 @@ public class TablaTipos {
     private final Map<String, Simbolo> structs = new HashMap<>();
 
     public boolean declararStruct(Simbolo s) {
-        if (structs.containsKey(s.nombre)) return false;
-        structs.put(s.nombre, s);
+        if (structs.containsKey(s.nombre)) return false; //revisa si ya existe
+        structs.put(s.nombre, s); // si no existe entonces lo registra
         return true;
     }
 
@@ -26,5 +27,9 @@ public class TablaTipos {
 
     public boolean existeStruct(String nombre) {
         return structs.containsKey(nombre);
+    }
+    
+    public Collection<Simbolo> todas() {
+        return structs.values();
     }
 }

@@ -5,6 +5,8 @@
 package com.mycompany.codexlatinuscompiler.gui.view;
 
 import com.mycompany.codexlatinuscompiler.gui.controller.MainController;
+import com.mycompany.codexlatinuscompiler.gui.util.TipoMensaje;
+import com.mycompany.codexlatinuscompiler.gui.view.console.ConsoleView;
 import java.time.Duration;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -26,6 +28,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 public class MainView extends BorderPane {
 
     private final MainController controller;
+    private ConsoleView consoleView; 
     private SyntaxHighlighter syntaxHighlighter;
 
     // Componentes que necesitaremos actualizar desde el controlador
@@ -273,6 +276,7 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
         return panel;
     }
 
+    /*
     private VBox createBottomArea() {
         VBox panel = new VBox();
         panel.setPadding(new Insets(5));
@@ -294,6 +298,22 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
 
         panel.getChildren().addAll(lblConsole, consoleTextArea);
         return panel;
+    }*/
+    
+    private VBox createBottomArea() {
+        VBox panel = new VBox();
+        panel.setPadding(new Insets(5));
+        panel.setStyle("-fx-background-color: #2c3e50;");
+
+        Label lblConsole = new Label("Consola / Errores");
+        lblConsole.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+
+        consoleView = new ConsoleView();
+        consoleView.addMessage("[INFO] Bienvenido a Codex Latinus Compiler", TipoMensaje.INFO);
+        consoleView.addMessage("[INFO] Abre o escribe un archivo .lat y presiona 'Analizar'.", TipoMensaje.INFO);
+
+        panel.getChildren().addAll(lblConsole, consoleView);
+        return panel;
     }
 
     // ---------- Métodos públicos para actualizar la vista desde el controlador ----------
@@ -310,9 +330,9 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
         consoleTextArea.appendText(message + "\n");
     }
 
-    public void clearConsole() {
-        consoleTextArea.clear();
-    }
+//    public void clearConsole() {
+//        consoleTextArea.clear();
+//    }
 
     public void setStatus(String text, String color) {
         statusLabel.setText(text);
@@ -354,5 +374,13 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
 
     public void setPigLatinContent(Node content) {
         resultsTabPane.getTabs().get(4).setContent(content);
+    }
+    
+    public void clearConsole() {
+        consoleView.clear();
+    }
+    
+    public void appendMessage(String text, TipoMensaje tipo) {
+        consoleView.addMessage(text, tipo);
     }
 }

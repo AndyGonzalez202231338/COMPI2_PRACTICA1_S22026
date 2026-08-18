@@ -12,4 +12,13 @@
 .identifier  { -fx-fill: #FFFF99; }
 .default-text{ -fx-fill: #D4D4D4; }
 
-.lineno { -fx-text-fill: #858585; -fx-background-color: #252526; }
+/* Cursor blanco */
+.caret {
+    -fx-stroke: white;
+}
+
+/* Números de línea */
+.lineno {
+    -fx-text-fill: #888888;
+    -fx-background-color: #2d2d2d;
+}

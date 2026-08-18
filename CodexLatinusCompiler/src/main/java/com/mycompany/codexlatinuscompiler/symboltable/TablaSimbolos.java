@@ -14,36 +14,39 @@ import java.util.List;
 public class TablaSimbolos {
     private Scope actual;
     private final Scope global;
-    private int contadorScopes = 0;
 
     public TablaSimbolos() {
-        global = new Scope(null, 0);
+        global = new Scope(null, "Global", true);
         actual = global;
     }
 
-    public void entrarScope() {
-        actual = new Scope(actual, ++contadorScopes);
+    public void entrarScope(String descripcion) {
+        actual = new Scope(actual, descripcion, true);
+    }
+    
+    public void entrarScopeTemporal() {
+        actual = new Scope(actual, null, false);
     }
 
     public void salirScope() {
-        if (actual.getPadre() != null) {
-            actual = actual.getPadre();
-        }
+        if (actual.getPadre() != null) actual = actual.getPadre();
+    }
+    
+    public boolean declarar(Simbolo s) { 
+        return actual.declarar(s); 
+    }
+    
+    public Simbolo resolver(String nombre) { 
+        return actual.resolver(nombre); 
     }
 
-    public boolean declarar(Simbolo s) {
-        return actual.declarar(s);
-    }
-
-    public Simbolo resolver(String nombre) {
-        return actual.resolver(nombre);
-    }
-
-    public Scope getScopeActual() {
+    public Scope getActual() {
         return actual;
     }
 
     public Scope getScopeGlobal() {
         return global;
     }
+
+    
 }

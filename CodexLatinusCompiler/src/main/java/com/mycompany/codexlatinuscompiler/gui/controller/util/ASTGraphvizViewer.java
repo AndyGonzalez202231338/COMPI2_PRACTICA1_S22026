@@ -28,7 +28,11 @@ public class ASTGraphvizViewer {
         ASTToDotConverter converter = new ASTToDotConverter();
         String dot = converter.convertir(ast);
         // Generar imagen con Graphviz
+        // scale() sube la resolución de renderizado; al expandir el árbol
+        // (más nodesep/ranksep en el DOT) la imagen resultante es más grande,
+        // así que renderizamos con más DPI para que no se vea borrosa al hacer zoom.
         BufferedImage image = Graphviz.fromString(dot)
+                .scale(1.5)
                 .render(Format.PNG)
                 .toImage();
         // Convertir a Image de JavaFX

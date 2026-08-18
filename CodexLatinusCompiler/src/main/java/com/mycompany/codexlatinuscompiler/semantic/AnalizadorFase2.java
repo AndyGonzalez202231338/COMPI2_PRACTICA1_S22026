@@ -49,9 +49,12 @@ public class AnalizadorFase2 {
         } finis;
         reddere resultado;
     } finis;
+    
+    Analsis semantico: Parametros duplicados en funcion (esto x : numerus, esto x : numerus)
+                       Funcion no ratio sin redere
     */
     private void analizarFuncion(NodoFuncion f) {
-        tabla.entrarScope();
+        tabla.entrarScope("Función: " + f.nombre);
 
         // Registrar parámetros
         for (NodoParametro p : f.parametros) {
@@ -59,6 +62,7 @@ public class AnalizadorFase2 {
             s.nombre = p.nombre;
             s.tipo = p.tipo;
             s.linea = p.linea;
+            s.esParametro = true;
             if (!tabla.declarar(s)) {
                 errores.reportar("Parámetro duplicado: '" + p.nombre + "'", p.linea);
             }
@@ -112,6 +116,13 @@ public class AnalizadorFase2 {
         return false;
     }
     
+    /**
+     * Registrar declaraciones locales dentro de una funcion.
+     * Analisis Semtantico: Variable local duplicada
+     *                      Arreglo local duplicado
+     *                      Variable struct local duplicada
+     * @param decl 
+     */
     private void registrarDeclaracionLocal(NodoDeclaracion decl) {
         if (decl instanceof NodoDeclaracionVariable d) {
             Simbolo s = new Simbolo();
@@ -150,7 +161,9 @@ public class AnalizadorFase2 {
     }
 
     /*
-    esto i: numerus 0;  
+    esto i: numerus 0;
+    Analisis Semantico: "'perge' solo puede usarse dentro de un ciclo"
+                        "'interrumpe' solo puede usarse dentro de un ciclo"
     */
     private void analizarSentencia(NodoAST nodo) {
         if (nodo == null) return;
@@ -158,8 +171,6 @@ public class AnalizadorFase2 {
         if (nodo instanceof NodoDeclaracionVariable ||
             nodo instanceof NodoDeclaracionArray ||
             nodo instanceof NodoDeclaracionStructVar) {
-            // Las declaraciones dentro de bloques se registran al analizar el bloque,
-            // pero si aparecen como sentencia suelta (no debería), las registramos aquí.
             registrarDeclaracionLocal((NodoDeclaracion) nodo);
             return;
         }
@@ -220,7 +231,9 @@ public class AnalizadorFase2 {
         }
     }
     /*
-    resultado = resultado * n;
+        resultado = resultado * n;
+        Analisis semantico: Destino de asignación no válido
+                            No se pudo determinar el tipo de estructura para la asignación
     */
     private void analizarAsignacion(NodoAsignacion nodo) {
         NodoAST dest = nodo.destino;
@@ -247,22 +260,27 @@ public class AnalizadorFase2 {
     }
     
     private String obtenerTipoStructDestino(NodoAST dest) {
-        if (dest instanceof NodoIdentificador) {
-            Simbolo s = tabla.resolver(((NodoIdentificador) dest).nombre);
-            if (s != null && s.esStruct) return s.nombre;
-            return null;
-        } else if (dest instanceof NodoAccesoAtributo) {
-            NodoAccesoAtributo attr = (NodoAccesoAtributo) dest;
+        if (dest instanceof NodoIdentificador id) {
+            Simbolo s = tabla.resolver(id.nombre);
+            return s != null ? s.tipo : null;
+        }
+
+        if (dest instanceof NodoAccesoAtributo attr) {
             Simbolo base = resolverBaseAcceso(attr.base);
-            if (base == null) return null;
+            if (base == null || base.tipo == null) return null;
             Simbolo structDef = tipos.resolverStruct(base.tipo);
             if (structDef == null) return null;
             for (Simbolo at : structDef.atributosStruct) {
-                if (at.nombre.equals(attr.nombreAtributo)) {
-                    return at.tipo;
-                }
+                if (at.nombre.equals(attr.nombreAtributo)) return at.tipo;
             }
+            return null;
         }
+
+        if (dest instanceof NodoAccesoArreglo acc) {
+            Simbolo base = resolverBaseAcceso(acc.base);
+            return base != null ? base.tipo : null;
+        }
+
         return null;
     }
     
@@ -281,7 +299,7 @@ public class AnalizadorFase2 {
     }
     
     /*
-    mi_selva.animales[1] = { nombre: "Perro", apodo: "Canis" };
+     mi_selva.animales[1] = { nombre: "Perro", apodo: "Canis" };
     */
     private void analizarAccesoAtributo(NodoAccesoAtributo nodo) {
         Simbolo base = resolverBaseAcceso(nodo.base);
@@ -307,15 +325,33 @@ public class AnalizadorFase2 {
     }
     
     private Simbolo resolverBaseAcceso(NodoAST base) {
-        if (base instanceof NodoIdentificador) {
-            return tabla.resolver(((NodoIdentificador) base).nombre);
-        } else if (base instanceof NodoAccesoAtributo) {
-            analizarAccesoAtributo((NodoAccesoAtributo) base);
-            return new Simbolo(); // dummy, ya se validó
-        } else if (base instanceof NodoAccesoArreglo) {
-            analizarAccesoArreglo((NodoAccesoArreglo) base);
-            return new Simbolo();
+        if (base instanceof NodoIdentificador id) {
+            return tabla.resolver(id.nombre);
         }
+
+        if (base instanceof NodoAccesoAtributo attr) {
+            Simbolo baseDeAttr = resolverBaseAcceso(attr.base);
+            if (baseDeAttr == null || baseDeAttr.tipo == null) return null;
+
+            Simbolo structDef = tipos.resolverStruct(baseDeAttr.tipo);
+            if (structDef == null) return null;
+
+            for (Simbolo at : structDef.atributosStruct) {
+                if (at.nombre.equals(attr.nombreAtributo)) {
+                    Simbolo resultado = new Simbolo();
+                    resultado.tipo = at.tipo;
+                    resultado.esArreglo = at.esArreglo;
+                    return resultado; 
+                }
+            }
+            return null;
+        }
+
+        if (base instanceof NodoAccesoArreglo acc) {
+            analizarExpresion(acc.indice);
+            return resolverBaseAcceso(acc.base); 
+        }
+
         return null;
     }
     
@@ -361,7 +397,8 @@ public class AnalizadorFase2 {
     }
     
     /*
-    mi_entero = 23;
+        Llamar a una variable o funcion que no habia sido declarado
+        Analisis Semantico: Identificador no declarado
     */
     private void resolverIdentificador(NodoIdentificador id) {
         if (tabla.resolver(id.nombre) == null) {
@@ -371,6 +408,7 @@ public class AnalizadorFase2 {
     
     /*
     resultado * n
+    n * factorial(n - 1);
     */
     private void analizarExpresion(NodoAST expr) {
         if (expr == null) return;
@@ -388,11 +426,12 @@ public class AnalizadorFase2 {
         } else if (expr instanceof NodoLlamadaFuncion) {
             analizarLlamadaFuncion((NodoLlamadaFuncion) expr);
         }
-        // Literales no requieren acción
     }
     
     /*
-    calcularPoder(fuerza);
+        calcularPoder(fuerza);
+        Analisis semantico: Función no declarada cuando se llama una funcion que no ha sido declarada antes
+                            La funcion pide un argunmento pero se llama a la funcion sin nada o vacio.
     */
     private void analizarLlamadaFuncion(NodoLlamadaFuncion nodo) {
         Simbolo func = tabla.resolver(nodo.nombre);
@@ -420,13 +459,13 @@ public class AnalizadorFase2 {
     */
     private void analizarSi(NodoSi nodo) {
         analizarExpresion(nodo.condicion);
-        analizarBloque(nodo.bloqueSi);
+        analizarBloque(nodo.bloqueSi, "Bloque si");
         for (NodoAliterIf al : nodo.ramasAliter) {
             analizarExpresion(al.condicion);
-            analizarBloque(al.bloque);
+            analizarBloque(al.bloque, "Bloque aliter");
         }
         if (nodo.bloqueAliterFinal != null) {
-            analizarBloque(nodo.bloqueAliterFinal);
+            analizarBloque(nodo.bloqueAliterFinal, "Bloque aliter");
         }
     }
     
@@ -439,7 +478,7 @@ public class AnalizadorFase2 {
         analizarExpresion(nodo.condicion);
         boolean prev = contexto.dentroDeCiclo;
         contexto.dentroDeCiclo = true;
-        analizarBloque(nodo.cuerpo);
+        analizarBloque(nodo.cuerpo, "Cuerpo dum");
         contexto.dentroDeCiclo = prev;
     }
     
@@ -451,7 +490,7 @@ public class AnalizadorFase2 {
     private void analizarFacere(NodoFacere nodo) {
         boolean prev = contexto.dentroDeCiclo;
         contexto.dentroDeCiclo = true;
-        analizarBloque(nodo.cuerpo);
+        analizarBloque(nodo.cuerpo, "Cuerpo facere");
         contexto.dentroDeCiclo = prev;
         analizarExpresion(nodo.condicion);
     }
@@ -462,7 +501,7 @@ public class AnalizadorFase2 {
     }
     */
     private void analizarPer(NodoPer nodo) {
-        tabla.entrarScope();
+        tabla.entrarScope("Ciclo per (" + nodo.inicializacion.nombre + ")");
 
         // Inicialización
         if (nodo.inicializacion != null) {
@@ -484,7 +523,7 @@ public class AnalizadorFase2 {
 
         boolean prev = contexto.dentroDeCiclo;
         contexto.dentroDeCiclo = true;
-        analizarBloque(nodo.cuerpo);
+        analizarBloque(nodo.cuerpo, "Cuerpo pere");
         contexto.dentroDeCiclo = prev;
 
         tabla.salirScope();
@@ -498,15 +537,20 @@ public class AnalizadorFase2 {
         b = temp;
     }
     */
-    private void analizarBloque(List<NodoAST> sentencias) {
+    private void analizarBloque(List<NodoAST> sentencias, String descripcion) {
         if (sentencias == null || sentencias.isEmpty()) return;
-        tabla.entrarScope();
-        for (NodoAST sent : sentencias) {
+        tabla.entrarScope(descripcion);
+        for (NodoAST sent : sentencias){
             analizarSentencia(sent);
         }
         tabla.salirScope();
     }
     
+    /**
+     * edad << sin descalarlo antes 
+     * Analisis semantico: Variable no declarada en lectura:
+     * @param nodo 
+     */
     private void analizarLectura(NodoLectura nodo) {
         if (nodo.nombreVariable != null) {
             if (tabla.resolver(nodo.nombreVariable) == null) {
@@ -520,7 +564,13 @@ public class AnalizadorFase2 {
             analizarExpresion(val);
         }
     }
-    
+    /**
+     * Analizar los retornos para funcionas actio o ratio
+     * Analisis Semantico: "'reddere' fuera de una función"
+     *                      "Función 'actio' no puede retornar un valor"
+     *                      "La función debe retornar un valor de tipo '"
+     * @param nodo 
+     */
     private void analizarRetorno(NodoRetorno nodo) {
         if (!contexto.dentroDeFuncion) {
             errores.reportar("'reddere' fuera de una función", nodo.linea);

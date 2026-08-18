@@ -51,7 +51,8 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
         nodo.nombre = ctx.ID().getText();
 
         if (ctx.tipoPrimitivo() != null) {
-            nodo.tipo = ctx.tipoPrimitivo().getText();
+            String tipoTexto = ctx.tipoPrimitivo().getText();
+            nodo.tipo = tipoTexto.equals("bool") ? "booleano" : tipoTexto;
             if (ctx.expresion() != null) {
                 nodo.valorInicial = visit(ctx.expresion());
             }
@@ -346,6 +347,7 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
             if (ctx.listaParametros() != null) {
                 for (var p : ctx.listaParametros().parametro()) {
                     NodoParametro param = new NodoParametro();
+                    param.linea = p.getStart().getLine();
                     param.nombre = p.ID().getText();
                     param.tipo = p.tipo().getText();
                     nodo.parametros.add(param);
@@ -430,6 +432,15 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
             NodoUnaria nodo = new NodoUnaria();
             nodo.linea = ctx.getStart().getLine();
             nodo.operador = "non";
+            nodo.esPrefijo = true;
+            nodo.operando = visit(ctx.expresionUnaria());
+            return nodo;
+        }
+        
+        if (ctx.MINUS() != null) {
+            NodoUnaria nodo = new NodoUnaria();
+            nodo.linea = ctx.getStart().getLine();
+            nodo.operador = "-";
             nodo.esPrefijo = true;
             nodo.operando = visit(ctx.expresionUnaria());
             return nodo;
