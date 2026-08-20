@@ -30,9 +30,18 @@ declaracionVariable
 
 declaracionArray
     : SERIES ID LBRACK expresion RBRACK COLON
-      (tipo (LBRACE listaExpresiones RBRACE)?
-      | LBRACE listaExpresiones RBRACE)
+      (tipo (LBRACE listaValoresArray RBRACE)?
+      | LBRACE listaValoresArray RBRACE)
       SEMI
+    ;
+
+listaValoresArray
+    : valorArrayElemento (COMMA valorArrayElemento)*
+    ;
+
+valorArrayElemento
+    : expresion
+    | literalEstructura
     ;
 
 declaracionStructDef
@@ -40,7 +49,7 @@ declaracionStructDef
     ;
 
 listaAtributos
-    : (atributo SEMI)*
+    : atributo (COMMA atributo)*
     ;
 
 atributo
@@ -106,7 +115,7 @@ retorno
 
 asignacion
     : accesoAsignable ASSIGN expresion SEMI
-    | accesoAsignable ASSIGN literalEstructura 
+    | accesoAsignable ASSIGN literalEstructura SEMI?
     ;
 
 accesoAsignable
@@ -134,7 +143,12 @@ cicloFacere
     ;
 
 cicloPer
-    : PER LPAREN declaracionVariable expresion SEMI expresion RPAREN LBRACE sentencia* RBRACE
+    : PER LPAREN declaracionVariable expresion SEMI incrementoPer RPAREN LBRACE sentencia* RBRACE
+    ;
+
+incrementoPer
+    : accesoAsignable ASSIGN expresion
+    | expresionUnaria
     ;
 
 /* FUNCIONES (RATIO/ACTIVO) */

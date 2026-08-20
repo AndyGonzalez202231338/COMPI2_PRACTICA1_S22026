@@ -6,9 +6,11 @@ com/mycompany/codexlatinuscompiler/semantic/AnalizadorFase5.class
 com/mycompany/codexlatinuscompiler/ast/NodoParametro.class
 com/mycompany/codexlatinuscompiler/ast/NodoDum.class
 com/mycompany/codexlatinuscompiler/gui/view/console/ConsoleView.class
+com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$IncrementoPerContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusBaseListener.class
 com/mycompany/codexlatinuscompiler/semantic/AnalizadorFase2.class
 com/mycompany/codexlatinuscompiler/gui/util/TipoMensaje.class
+com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ValorArrayElementoContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoFuncion.class
 com/mycompany/codexlatinuscompiler/ast/ASTBuilder.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionContext.class
@@ -31,6 +33,7 @@ com/mycompany/codexlatinuscompiler/symboltable/TablaTipos.class
 com/mycompany/codexlatinuscompiler/ast/NodoLectura.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SentenciaContext.class
+com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaValoresArrayContext.class
 com/mycompany/codexlatinuscompiler/semantic/EvaluadorConstantes.class
 com/mycompany/codexlatinuscompiler/symboltable/Scope.class
 com/mycompany/codexlatinuscompiler/errors/ManejadorErrores.class
@@ -63,6 +66,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusLexer.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$PrimarioContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AsignAtributoContext.class
 com/mycompany/codexlatinuscompiler/ResultadoCompilacion.class
+com/mycompany/codexlatinuscompiler/semantic/VerificadorTipos.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionLogicaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$LecturaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionVariableContext.class
@@ -98,6 +102,7 @@ com/mycompany/codexlatinuscompiler/semantic/AnalizadorSemantico.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaAsignAtributosContext.class
 com/mycompany/codexlatinuscompiler/semantic/AnalizadorFase4.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser.class
+com/mycompany/codexlatinuscompiler/symboltable/TipoDato.class
 com/mycompany/codexlatinuscompiler/gui/controller/util/TablaSimbolosViewer.class
 com/mycompany/codexlatinuscompiler/ast/NodoPrograma.class
 com/mycompany/codexlatinuscompiler/gui/view/console/ConsoleMessage.class

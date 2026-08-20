@@ -78,6 +78,26 @@ public interface CodexLatinusListener extends ParseTreeListener {
 	 */
 	void exitDeclaracionArray(CodexLatinusParser.DeclaracionArrayContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link CodexLatinusParser#listaValoresArray}.
+	 * @param ctx the parse tree
+	 */
+	void enterListaValoresArray(CodexLatinusParser.ListaValoresArrayContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CodexLatinusParser#listaValoresArray}.
+	 * @param ctx the parse tree
+	 */
+	void exitListaValoresArray(CodexLatinusParser.ListaValoresArrayContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CodexLatinusParser#valorArrayElemento}.
+	 * @param ctx the parse tree
+	 */
+	void enterValorArrayElemento(CodexLatinusParser.ValorArrayElementoContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CodexLatinusParser#valorArrayElemento}.
+	 * @param ctx the parse tree
+	 */
+	void exitValorArrayElemento(CodexLatinusParser.ValorArrayElementoContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link CodexLatinusParser#declaracionStructDef}.
 	 * @param ctx the parse tree
 	 */
@@ -267,6 +287,16 @@ public interface CodexLatinusListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCicloPer(CodexLatinusParser.CicloPerContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link CodexLatinusParser#incrementoPer}.
+	 * @param ctx the parse tree
+	 */
+	void enterIncrementoPer(CodexLatinusParser.IncrementoPerContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link CodexLatinusParser#incrementoPer}.
+	 * @param ctx the parse tree
+	 */
+	void exitIncrementoPer(CodexLatinusParser.IncrementoPerContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link CodexLatinusParser#funcion}.
 	 * @param ctx the parse tree
