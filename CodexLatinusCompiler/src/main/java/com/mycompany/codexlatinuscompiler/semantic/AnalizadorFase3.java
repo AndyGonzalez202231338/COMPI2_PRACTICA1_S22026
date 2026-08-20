@@ -26,18 +26,16 @@ public class AnalizadorFase3 {
         this.tipos = tipos;
         this.errores = errores;
     }
-
+    
     public void analizar(NodoPrograma programa) {
-        // Variables globales: mismo scope global usado por Fase 1/2, no se abre scope nuevo
         for (NodoDeclaracion d : programa.variablesGlobales) {
             verificarDeclaracion(d);
         }
-
+        
         for (NodoFuncion f : programa.funciones) {
             verificarFuncion(f);
         }
-
-        // Sentencias de MAIOR>: igual que Fase 2, se quedan en el scope global (sin abrir uno nuevo)
+        
         for (NodoAST sent : programa.sentenciasPrincipal) {
             verificarSentencia(sent);
         }
@@ -67,7 +65,6 @@ public class AnalizadorFase3 {
 
     private void verificarSentencia(NodoAST nodo) {
         if (nodo == null) return;
-
         if (nodo instanceof NodoDeclaracion d) {
             declararYVerificar(d);
         } else if (nodo instanceof NodoAsignacion a) {
@@ -91,10 +88,8 @@ public class AnalizadorFase3 {
         } else if (nodo instanceof NodoUnaria || nodo instanceof NodoBinaria) {
             inferirTipo(nodo);
         }
-        // NodoLectura, NodoPerge, NodoInterrumpe: sin verificación de tipos
     }
 
-    /** Igual que Fase 2's analizarBloque: abre scope, recorre, cierra scope. */
     private void verificarBloque(List<NodoAST> sentencias) {
         if (sentencias == null || sentencias.isEmpty()) return;
         tabla.entrarScopeTemporal();
@@ -116,7 +111,6 @@ public class AnalizadorFase3 {
         }
     }
 
-    /** Mismo patrón de doble scope que Fase 2's analizarPer: uno para el iterador, otro para el cuerpo. */
     private void verificarPer(NodoPer p) {
         tabla.entrarScopeTemporal();
 
@@ -133,13 +127,24 @@ public class AnalizadorFase3 {
         }
 
         verificarCondicionBooleana(p.condicion, "per");
-        if (p.incremento != null) inferirTipo(p.incremento);
+        if (p.incremento != null) {
+            if (p.incremento instanceof NodoAsignacion asigInc) {
+                verificarAsignacion(asigInc);
+            } else {
+                inferirTipo(p.incremento);
+            }
+        }
 
         verificarBloque(p.cuerpo);
 
         tabla.salirScope();
     }
-
+    /**
+     * Analisis semantico: una variable en las condiciones solo puede ser booleana
+     *                      no se permite usar un numerus o decimalis etc
+     * @param condicion
+     * @param contexto 
+     */
     private void verificarCondicionBooleana(NodoAST condicion, String contexto) {
         if (condicion == null) return;
         String tipo = inferirTipo(condicion);
@@ -150,7 +155,6 @@ public class AnalizadorFase3 {
         }
     }
 
-    // DECLARACIONES (declara en el scope actual + verifica tipos)
     private void declararYVerificar(NodoDeclaracion decl) {
         if (decl instanceof NodoDeclaracionVariable d) {
             Simbolo s = new Simbolo();
@@ -188,7 +192,9 @@ public class AnalizadorFase3 {
         // si la habilitaste ahí, regístrala en TablaTipos aquí también.
     }
 
-    /** Para variables/arreglos globales (fuera de función), sin re-declarar (ya están en Fase 1). */
+    /** Para variables/arreglos globales (fuera de función), sin re-declarar 
+     *  (ya están en Fase 1).
+     */
     private void verificarDeclaracion(NodoDeclaracion decl) {
         if (decl instanceof NodoDeclaracionVariable d) {
             verificarDeclaracionVariable(d);
@@ -202,13 +208,13 @@ public class AnalizadorFase3 {
             }
         }
     }
-
+    
     private void verificarDeclaracionVariable(NodoDeclaracionVariable d) {
         if (d.valorInicial == null) return;
         String tipoValor = inferirTipo(d.valorInicial);
         if (tipoValor == null) return;
 
-        if (!compatible(d.tipo, tipoValor)) {
+        if (!VerificadorTipos.compatible(d.tipo, tipoValor)) {
             errores.reportar("Tipo incompatible en '" + d.nombre + "': se declaró '" +
                     d.tipo + "' pero el valor es de tipo '" + tipoValor + "'", d.linea);
         }
@@ -239,7 +245,7 @@ public class AnalizadorFase3 {
 
         for (NodoAST v : d.valoresIniciales) {
             String tipoVal = inferirTipo(v);
-            if (tipoVal != null && !compatible(d.tipo, tipoVal)) {
+            if (tipoVal != null && !VerificadorTipos.compatible(d.tipo, tipoVal)) {
                 errores.reportar("Valor incompatible en el arreglo '" + d.nombre +
                         "': se esperaba '" + d.tipo + "' y se encontró '" + tipoVal + "'", v.linea);
             }
@@ -254,13 +260,13 @@ public class AnalizadorFase3 {
 
     private void verificarAsignacion(NodoAsignacion a) {
         if (a.valor instanceof NodoLiteralEstructura) {
-            return; // ya validado a nivel de atributos en Fase 2
+            return;
         }
 
         String tipoDestino = inferirTipo(a.destino);
         String tipoValor = inferirTipo(a.valor);
 
-        if (tipoDestino != null && tipoValor != null && !compatible(tipoDestino, tipoValor)) {
+        if (tipoDestino != null && tipoValor != null && !VerificadorTipos.compatible(tipoDestino, tipoValor)) {
             errores.reportar("Asignación de tipo incompatible: destino '" + tipoDestino +
                     "', valor '" + tipoValor + "'", a.linea);
         }
@@ -282,7 +288,12 @@ public class AnalizadorFase3 {
                     acc.linea);
         }
     }
-
+    
+    /**
+     * Analisis semantico: Se espera un argumento booleando pero llaman a la funcion con
+     *                      numerus o algun otro tipo.
+     * @param nodo 
+     */
     private void verificarLlamadaFuncion(NodoLlamadaFuncion nodo) {
         Simbolo func = tabla.resolver(nodo.nombre);
         if (func == null || !func.esFuncion || func.parametros == null) return;
@@ -293,7 +304,7 @@ public class AnalizadorFase3 {
         for (int i = 0; i < n; i++) {
             String tipoEsperado = func.parametros.get(i).tipo;
             String tipoDado = inferirTipo(nodo.argumentos.get(i));
-            if (tipoDado != null && !compatible(tipoEsperado, tipoDado)) {
+            if (tipoDado != null && !VerificadorTipos.compatible(tipoEsperado, tipoDado)) {
                 errores.reportar("Argumento " + (i + 1) + " de '" + nodo.nombre +
                         "' espera tipo '" + tipoEsperado + "' pero se dio '" + tipoDado + "'",
                         nodo.linea);
@@ -339,7 +350,12 @@ public class AnalizadorFase3 {
 
         if (expr instanceof NodoLlamadaFuncion call) {
             Simbolo func = tabla.resolver(call.nombre);
-            return func != null ? func.tipoRetorno : null;
+            if (func != null) {
+                /** Analsis Semantico: Verificar que la llamada de funcion ingrese los parametros correctos**/
+                verificarLlamadaFuncion(call);
+                return func.tipoRetorno;
+            }
+            return null;
         }
 
         if (expr instanceof NodoUnaria u) {
@@ -364,7 +380,16 @@ public class AnalizadorFase3 {
 
         return null;
     }
-
+    
+    /**
+     * Analisis Semtantico: La logica relacional solo permite dos expresiones booleanas
+     *                      el textum solo puede concatenarse con una suma no con otra operacion.
+     *                      El tipo 'textum' no puede compararse con el operador '== , !=, <, >, etc solo permite concatenacion
+     * 
+     *                      
+     * @param b
+     * @return 
+     */
     private String inferirTipoBinaria(NodoBinaria b) {
         String tipoIzq = inferirTipo(b.izquierda);
         String tipoDer = inferirTipo(b.derecha);
@@ -374,8 +399,12 @@ public class AnalizadorFase3 {
         if (esRelacionalOLogico) {
             if (b.operador.equals("&&") || b.operador.equals("||")) {
                 if (!tipoIzq.equals("booleano") || !tipoDer.equals("booleano")) {
-                    errores.reportar("El operador '" + b.operador +
-                            "' requiere operandos booleanos", b.linea);
+                    errores.reportar("El operador '" + b.operador + "' requiere operandos booleanos", b.linea);
+                }
+            } else {
+                // Para el resto de relacionales, no se permite textum
+                if (tipoIzq.equals("textum") || tipoDer.equals("textum")) {
+                    errores.reportar("El tipo 'textum' no puede compararse con el operador '" + b.operador + "'; solo se permite concatenación con '+'", b.linea);
                 }
             }
             return "booleano";
@@ -405,10 +434,5 @@ public class AnalizadorFase3 {
         return tipo.equals("numerus") || tipo.equals("decimalis");
     }
 
-    private boolean compatible(String tipoDestino, String tipoValor) {
-        if (tipoDestino == null || tipoValor == null) return true;
-        if (tipoDestino.equals(tipoValor)) return true;
-        if (tipoDestino.equals("textum")) return true;
-        return false;
-    }
+
 }

@@ -53,6 +53,18 @@ public interface CodexLatinusVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDeclaracionArray(CodexLatinusParser.DeclaracionArrayContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link CodexLatinusParser#listaValoresArray}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitListaValoresArray(CodexLatinusParser.ListaValoresArrayContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CodexLatinusParser#valorArrayElemento}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitValorArrayElemento(CodexLatinusParser.ValorArrayElementoContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link CodexLatinusParser#declaracionStructDef}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -166,6 +178,12 @@ public interface CodexLatinusVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitCicloPer(CodexLatinusParser.CicloPerContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link CodexLatinusParser#incrementoPer}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIncrementoPer(CodexLatinusParser.IncrementoPerContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link CodexLatinusParser#funcion}.
 	 * @param ctx the parse tree

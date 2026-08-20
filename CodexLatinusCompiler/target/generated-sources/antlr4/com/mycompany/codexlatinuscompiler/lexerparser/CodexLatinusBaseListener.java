@@ -101,6 +101,30 @@ public class CodexLatinusBaseListener implements CodexLatinusListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterListaValoresArray(CodexLatinusParser.ListaValoresArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListaValoresArray(CodexLatinusParser.ListaValoresArrayContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterValorArrayElemento(CodexLatinusParser.ValorArrayElementoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitValorArrayElemento(CodexLatinusParser.ValorArrayElementoContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterDeclaracionStructDef(CodexLatinusParser.DeclaracionStructDefContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -324,6 +348,18 @@ public class CodexLatinusBaseListener implements CodexLatinusListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCicloPer(CodexLatinusParser.CicloPerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterIncrementoPer(CodexLatinusParser.IncrementoPerContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitIncrementoPer(CodexLatinusParser.IncrementoPerContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

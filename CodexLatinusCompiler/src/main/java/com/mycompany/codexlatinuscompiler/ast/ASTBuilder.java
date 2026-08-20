@@ -74,13 +74,15 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
         NodoDeclaracionArray nodo = new NodoDeclaracionArray();
         nodo.linea = ctx.getStart().getLine();
         nodo.nombre = ctx.ID().getText();
-        nodo.tipo = ctx.tipo() != null ? ctx.tipo().getText() : null;
+        nodo.tipo = ctx.tipo() != null ? normalizarTipo(ctx.tipo().getText()) : null;
         nodo.tamano = visit(ctx.expresion());
         nodo.valoresIniciales = null;
-        if (ctx.listaExpresiones() != null) {
+        if (ctx.listaValoresArray() != null) {
             nodo.valoresIniciales = new ArrayList<>();
-            for (var e : ctx.listaExpresiones().expresion()) {
-                nodo.valoresIniciales.add(visit(e));
+            for (var v : ctx.listaValoresArray().valorArrayElemento()) {
+                nodo.valoresIniciales.add(
+                    v.literalEstructura() != null ? visit(v.literalEstructura()) : visit(v.expresion())
+                );
             }
         }
         return nodo;
@@ -99,7 +101,7 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
             attr.linea = a.getStart().getLine();
             attr.nombre = a.ID().getText();
             attr.esArreglo = a.SERIES() != null;
-            attr.tipo = a.tipo() != null ? a.tipo().getText() : "booleano";
+            attr.tipo = normalizarTipo(a.tipo().getText());
             nodo.atributos.add(attr);
         }
         return nodo;
@@ -286,10 +288,22 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
         NodoPer nodo = new NodoPer();
         nodo.linea = ctx.getStart().getLine();
         nodo.inicializacion = (NodoDeclaracionVariable) visit(ctx.declaracionVariable());
-        nodo.condicion = visit(ctx.expresion(0));
-        nodo.incremento = visit(ctx.expresion(1));
+        nodo.condicion = visit(ctx.expresion());
+        nodo.incremento = visit(ctx.incrementoPer());
         nodo.cuerpo = visitarBloque(ctx.sentencia());
         return nodo;
+    }
+    
+    @Override
+    public NodoAST visitIncrementoPer(IncrementoPerContext ctx) {
+        if (ctx.ASSIGN() != null) {
+            NodoAsignacion nodo = new NodoAsignacion();
+            nodo.linea = ctx.getStart().getLine();
+            nodo.destino = visit(ctx.accesoAsignable());
+            nodo.valor = visit(ctx.expresion());
+            return nodo;
+        }
+        return visit(ctx.expresionUnaria());
     }
 
     @Override
@@ -349,7 +363,7 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
                     NodoParametro param = new NodoParametro();
                     param.linea = p.getStart().getLine();
                     param.nombre = p.ID().getText();
-                    param.tipo = p.tipo().getText();
+                    param.tipo = normalizarTipo(p.tipo().getText());
                     nodo.parametros.add(param);
                 }
             }
@@ -362,7 +376,7 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
             }
 
             nodo.cuerpo = visitarBloque(ctx.sentencia());
-            nodo.tipoRetorno = ctx.RATIO() != null ? ctx.tipo().getText() : null;
+            nodo.tipoRetorno = ctx.RATIO() != null ? normalizarTipo(ctx.tipo().getText()) : null;
 
             return nodo;
     }
@@ -520,6 +534,10 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
         }
 
         return null; // no debería llegar aquí si la gramática está bien cubierta
+    }
+    
+    private String normalizarTipo(String texto) {
+        return texto.equals("bool") ? "booleano" : texto;
     }
     
 }

@@ -519,7 +519,13 @@ public class AnalizadorFase2 {
         }
 
         if (nodo.condicion != null) analizarExpresion(nodo.condicion);
-        if (nodo.incremento != null) analizarExpresion(nodo.incremento);
+        if (nodo.incremento != null) {
+            if (nodo.incremento instanceof NodoAsignacion asigInc) {
+                analizarAsignacion(asigInc);
+            } else {
+                analizarExpresion(nodo.incremento);
+            }
+        }
 
         boolean prev = contexto.dentroDeCiclo;
         contexto.dentroDeCiclo = true;
