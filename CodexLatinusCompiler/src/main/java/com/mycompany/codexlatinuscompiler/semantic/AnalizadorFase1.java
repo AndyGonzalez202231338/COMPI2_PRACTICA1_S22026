@@ -86,6 +86,7 @@ public class AnalizadorFase1 {
         s.nombre = d.nombre;
         s.tipo = d.tipo;
         s.linea = d.linea;
+        //s.inicializada = (d.valorInicial != null);
         if (!tabla.declarar(s)) {
             errores.reportar("La variable global '" + d.nombre + "' ya fue declarada", d.linea);
         }
@@ -103,26 +104,19 @@ public class AnalizadorFase1 {
         s.nombre = d.nombre;
         s.tipo = d.tipo;
         s.esArreglo = true;
-        Integer tamanoEvaluado = EvaluadorConstantes.evaluar(d.tamano);
-        
-        if (tamanoEvaluado == null) {
-            errores.reportar("El tamaño del arreglo '" + d.nombre + "' debe ser una expresión constante (solo números).", d.linea);
-            return;
-        }
-        
-        if (tamanoEvaluado <= 0) {
-            errores.reportar("El tamaño del arreglo '" + d.nombre + "' debe ser mayor a cero.", d.linea);
-            return;
-        }
-
-        s.tamanoArreglo = tamanoEvaluado;
+        s.tamanoArreglo = EvaluadorConstantes.evaluar(d.tamano);
         s.linea = d.linea;
+
+        if (s.tamanoArreglo != null && s.tamanoArreglo <= 0) {
+            errores.reportar("El arreglo '" + d.nombre + "' debe tener tamaño mayor a 0, se declaró " +
+                    s.tamanoArreglo, d.linea);
+        }
 
         if (!tabla.declarar(s)) {
             errores.reportar("El arreglo global '" + d.nombre + "' ya fue declarado", d.linea);
         }
     }
-    
+
     /**
      * registra declaracion de variables de tipo estructura
      * Analisis Semantico: La variable estructura ya fue declarada
@@ -133,6 +127,7 @@ public class AnalizadorFase1 {
         s.nombre = d.nombre;
         s.tipo = d.tipoStruct;
         s.linea = d.linea;
+        s.inicializada = (d.valores != null);
         if (!tabla.declarar(s)) {
             errores.reportar("La variable global '" + d.nombre + "' ya fue declarada", d.linea);
         }

@@ -129,6 +129,7 @@ public class AnalizadorFase2 {
             s.nombre = d.nombre;
             s.tipo = d.tipo;
             s.linea = d.linea;
+            //s.inicializada = (d.valorInicial != null);
             if (!tabla.declarar(s)) {
                 errores.reportar("Variable local duplicada: '" + d.nombre + "'", d.linea);
             }
@@ -151,6 +152,7 @@ public class AnalizadorFase2 {
             s.nombre = d.nombre;
             s.tipo = d.tipoStruct;
             s.linea = d.linea;
+            s.inicializada = (d.valores != null);
             if (!tabla.declarar(s)) {
                 errores.reportar("Variable struct local duplicada: '" + d.nombre + "'", d.linea);
             }

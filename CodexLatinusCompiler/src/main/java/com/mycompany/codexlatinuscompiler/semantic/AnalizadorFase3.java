@@ -161,6 +161,7 @@ public class AnalizadorFase3 {
             s.nombre = d.nombre;
             s.tipo = d.tipo;
             s.linea = d.linea;
+            //s.inicializada = (d.valorInicial != null);
             tabla.declarar(s);
             verificarDeclaracionVariable(d);
 
@@ -171,6 +172,11 @@ public class AnalizadorFase3 {
             s.esArreglo = true;
             s.tamanoArreglo = EvaluadorConstantes.evaluar(d.tamano);
             s.linea = d.linea;
+            
+            if (s.tamanoArreglo != null && s.tamanoArreglo <= 0) {           // 👈 nuevo
+                errores.reportar("El arreglo '" + d.nombre +
+                        "' debe tener tamaño mayor a 0, se declaró " + s.tamanoArreglo, d.linea);
+            }
             tabla.declarar(s);
             verificarDeclaracionArray(d);
 
@@ -180,6 +186,7 @@ public class AnalizadorFase3 {
             s.tipo = d.tipoStruct;
             s.esStruct = true;
             s.linea = d.linea;
+            s.inicializada = (d.valores != null);
             tabla.declarar(s);
 
             if (d.valores != null) {
@@ -252,7 +259,7 @@ public class AnalizadorFase3 {
         }
 
         Integer tamanoConst = EvaluadorConstantes.evaluar(d.tamano);
-        if (tamanoConst != null && d.valoresIniciales.size() > tamanoConst) {
+        if (tamanoConst != null && d.valoresIniciales.size() != tamanoConst) {
             errores.reportar("El arreglo '" + d.nombre + "' declara tamaño " + tamanoConst +
                     " pero recibe " + d.valoresIniciales.size() + " valores", d.linea);
         }
@@ -277,6 +284,13 @@ public class AnalizadorFase3 {
     }
 
     private void verificarRangoArreglo(NodoAccesoArreglo acc) {
+        String tipoIndice = inferirTipo(acc.indice);
+        if (tipoIndice != null && !tipoIndice.equals("numerus")) {
+            errores.reportar("El índice de un arreglo debe ser de tipo numerus, se encontró '" +
+                    tipoIndice + "'", acc.linea);
+            return; // no tiene sentido seguir validando rango con un índice inválido
+        }
+
         if (!(acc.base instanceof NodoIdentificador id)) return;
         Simbolo s = tabla.resolver(id.nombre);
         if (s == null || s.tamanoArreglo == null) return;
@@ -284,8 +298,7 @@ public class AnalizadorFase3 {
         Integer indiceConst = EvaluadorConstantes.evaluar(acc.indice);
         if (indiceConst != null && (indiceConst < 0 || indiceConst >= s.tamanoArreglo)) {
             errores.reportar("Índice fuera de rango para '" + id.nombre +
-                    "': tamaño declarado " + s.tamanoArreglo + ", índice " + indiceConst,
-                    acc.linea);
+                    "': tamaño declarado " + s.tamanoArreglo + ", índice " + indiceConst, acc.linea);
         }
     }
     
@@ -330,6 +343,11 @@ public class AnalizadorFase3 {
         }
 
         if (expr instanceof NodoAccesoArreglo acc) {
+            String tipoIndice = inferirTipo(acc.indice);
+//            if (tipoIndice != null && !tipoIndice.equals("numerus")) {
+//                errores.reportar("El índice de un arreglo debe ser de tipo numerus, se encontró '" +
+//                        tipoIndice + "'", acc.linea);
+//            }
             if (acc.base instanceof NodoIdentificador baseId) {
                 Simbolo s = tabla.resolver(baseId.nombre);
                 return s != null ? s.tipo : null;
@@ -338,13 +356,29 @@ public class AnalizadorFase3 {
         }
 
         if (expr instanceof NodoAccesoAtributo attr) {
+            //ACCESO A VARIABLE DE ESTRUCTURA NO INICIALIZADA
+            if (attr.base instanceof NodoIdentificador baseId) {
+                Simbolo baseSim = tabla.resolver(baseId.nombre);
+                if (baseSim != null && !baseSim.esArreglo && !baseSim.inicializada && esStructType(baseSim.tipo)) {
+                    errores.reportar("Acceso a la variable '" + baseId.nombre +
+                            "' de tipo estructura sin inicializar", attr.linea);
+                }
+            }
             String tipoBase = inferirTipo(attr.base);
             if (tipoBase == null) return null;
+
             Simbolo structDef = tipos.resolverStruct(tipoBase);
-            if (structDef == null) return null;
+            if (structDef == null) {
+                errores.reportar("El tipo '" + tipoBase + "' no es una estructura", attr.linea);
+                return null;
+            }
+
             for (Simbolo at : structDef.atributosStruct) {
                 if (at.nombre.equals(attr.nombreAtributo)) return at.tipo;
             }
+
+            errores.reportar("La estructura '" + tipoBase + "' no tiene el atributo '" +
+                    attr.nombreAtributo + "'", attr.linea);
             return null;
         }
 
@@ -394,6 +428,13 @@ public class AnalizadorFase3 {
         String tipoIzq = inferirTipo(b.izquierda);
         String tipoDer = inferirTipo(b.derecha);
         if (tipoIzq == null || tipoDer == null) return null;
+        
+        if (b.operador.equals("/")) {
+            Integer divisorConst = EvaluadorConstantes.evaluar(b.derecha);
+            if (divisorConst != null && divisorConst == 0) {
+                errores.reportar("División por cero", b.linea);
+            }
+        }
 
         boolean esRelacionalOLogico = List.of("==", "!=", "<", ">", "<=", ">=", "&&", "||").contains(b.operador);
         if (esRelacionalOLogico) {
@@ -432,6 +473,10 @@ public class AnalizadorFase3 {
 
     private boolean esNumerico(String tipo) {
         return tipo.equals("numerus") || tipo.equals("decimalis");
+    }
+    
+    private boolean esStructType(String tipo) {
+        return tipo != null && tipos.existeStruct(tipo);
     }
 
 

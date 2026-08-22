@@ -7,12 +7,15 @@ package com.mycompany.codexlatinuscompiler.gui.controller;
 import com.mycompany.codexlatinuscompiler.Compilador;
 import com.mycompany.codexlatinuscompiler.ResultadoCompilacion;
 import com.mycompany.codexlatinuscompiler.ast.NodoAST;
+import com.mycompany.codexlatinuscompiler.ast.NodoPrograma;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.ASTGraphvizViewer;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.ASTToDotConverter;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.ASTTreeConverter;
 import com.mycompany.codexlatinuscompiler.gui.controller.util.TablaSimbolosViewer;
 import com.mycompany.codexlatinuscompiler.gui.util.TipoMensaje;
 import com.mycompany.codexlatinuscompiler.gui.view.MainView;
+import com.mycompany.codexlatinuscompiler.parser.EstadoPila;
+import com.mycompany.codexlatinuscompiler.translator.TraductorPigLatin;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import java.awt.image.BufferedImage;
@@ -43,7 +46,11 @@ public class MainController {
     private final MainView view;
     private File currentFile;
     private ResultadoCompilacion ultimoResultado;
-    private final Compilador compilador = new Compilador();     
+    private final Compilador compilador = new Compilador();
+
+    // ---------- Navegación de la Pila de Procesos ----------
+    private List<EstadoPila> historialActual;   // referencia al historial del último análisis
+    private int indiceActual = -1;               // índice del estado que se está mostrando
 
     public MainController(MainView view) {
         this.view = view;
@@ -61,7 +68,8 @@ public class MainController {
         view.setSourceCode("");
         currentFile = null;
         view.setStatus("Nuevo archivo", "#f39c12");
-        view.appendMessage("[INFO] Nuevo archivo creado.", TipoMensaje.INFO);
+        view.appendMessage("Nuevo archivo creado.", TipoMensaje.INFO);
+        reiniciarPila();
     }
 
     public void abrirArchivo() {
@@ -77,7 +85,7 @@ public class MainController {
                 view.setSourceCode(content);
                 currentFile = file;
                 view.setStatus("Archivo cargado: " + file.getName(), "#2ecc71");
-                view.appendToConsole("[INFO] Archivo cargado: " + file.getAbsolutePath());
+                view.appendToConsole("Archivo cargado: " + file.getAbsolutePath());
             } catch (IOException e) {
                 showError("Error al abrir", e.getMessage());
             }
@@ -92,7 +100,7 @@ public class MainController {
         try {
             Files.write(currentFile.toPath(), view.getSourceCode().getBytes());
             view.setStatus("Guardado: " + currentFile.getName(), "#2ecc71");
-            view.appendToConsole("[INFO] Archivo guardado.");
+            view.appendToConsole("Archivo guardado.");
         } catch (IOException e) {
             showError("Error al guardar", e.getMessage());
         }
@@ -110,7 +118,7 @@ public class MainController {
                 Files.write(file.toPath(), view.getSourceCode().getBytes());
                 currentFile = file;
                 view.setStatus("Guardado como: " + file.getName(), "#2ecc71");
-                view.appendToConsole("[INFO] Archivo guardado como: " + file.getAbsolutePath());
+                view.appendToConsole("Archivo guardado como: " + file.getAbsolutePath());
             } catch (IOException e) {
                 showError("Error al guardar", e.getMessage());
             }
@@ -198,7 +206,7 @@ public class MainController {
 
         ResultadoCompilacion resultado = compilador.compilar(code);
 
-        // --- 1. Errores léxicos/sintácticos ---
+        // --- Errores léxicos/sintácticos ---
         if (!resultado.erroresLexicos.isEmpty() || !resultado.erroresSintacticos.isEmpty()) {
             view.appendMessage("[ERROR] Se encontraron errores de análisis léxico/sintáctico:", TipoMensaje.ERROR_SEMANTICO);
             for (String e : resultado.erroresLexicos) {
@@ -215,13 +223,14 @@ public class MainController {
             ));
             view.setASTContent(new Label("No disponible: hay errores léxicos/sintácticos."));
             view.setSymbolTableContent(new Label("No disponible: hay errores léxicos/sintácticos."));
+            cargarHistorialPila(resultado.getHistorialParser());
             return;
         }
 
-        view.appendMessage("[OK] Análisis léxico completado", TipoMensaje.INFO);
-        view.appendMessage("[OK] Análisis sintáctico completado", TipoMensaje.INFO);
+        view.appendMessage("Análisis léxico completado", TipoMensaje.INFO);
+        view.appendMessage("Análisis sintáctico completado", TipoMensaje.INFO);
 
-        // --- 2. Errores semánticos ---
+        // --- Errores semánticos ---
         if (!resultado.erroresSemanticos.isEmpty()) {
             view.appendMessage("[ERROR] Se encontraron errores semánticos:", TipoMensaje.ERROR_SEMANTICO);
             for (String e : resultado.erroresSemanticos) {
@@ -234,20 +243,22 @@ public class MainController {
             ));
             view.setASTContent(new Label("No disponible: el lenguaje no es válido (hay errores semánticos)."));
             view.setSymbolTableContent(new Label("No disponible: el lenguaje no es válido (hay errores semánticos)."));
+            cargarHistorialPila(resultado.getHistorialParser());
             return;
         }
 
-        // --- 3. Todo OK ---
-        view.appendMessage("[OK] Análisis semántico completado", TipoMensaje.INFO);
+
+        view.appendMessage("Análisis semántico completado", TipoMensaje.INFO);
         view.setStatus("Análisis completado", "#2ecc71");
         view.setErrorsContent(new Label("Sin errores."));
+        ultimoResultado = resultado;
 
         if (resultado.getAst() != null) {
-            view.appendMessage("[OK] AST generado", TipoMensaje.INFO);
+            view.appendMessage("AST generado", TipoMensaje.INFO);
             Node astGraph = ASTGraphvizViewer.crearVistaAST(resultado.getAst());
             view.setASTContent(astGraph);
         } else {
-            view.appendMessage("[WARN] No se generó AST", TipoMensaje.INFO);
+            view.appendMessage("No se generó AST", TipoMensaje.INFO);
             view.setASTContent(new Label("No se pudo generar AST."));
         }
 
@@ -257,7 +268,7 @@ public class MainController {
             );
         }
 
-        view.setStackContent(new Label("Pila de procesos (pendiente)."));
+        cargarHistorialPila(resultado.getHistorialParser());
     }
     
 
@@ -275,13 +286,134 @@ public class MainController {
         view.getResultsTabPane().getSelectionModel().select(2);
     }
 
+    // ---------- Navegación de la Pila de Procesos ----------
+
+    /**
+     * Asigna el historial capturado por el {@code ParserTraceListener} y
+     * posiciona la vista en el primer estado (si existe). Se debe llamar
+     * tras cada compilación, incluso si hubo errores léxicos/sintácticos,
+     * ya que el historial contiene los pasos hasta el punto del error.
+     */
+    public void cargarHistorialPila(List<EstadoPila> historial) {
+        this.historialActual = historial;
+        if (historial == null || historial.isEmpty()) {
+            this.indiceActual = -1;
+            view.limpiarPila();
+            return;
+        }
+        this.indiceActual = 0;
+        actualizarVistaPila();
+    }
+
+    /** Refleja en la vista el estado actual (historialActual.get(indiceActual)). */
+    private void actualizarVistaPila() {
+        if (historialActual == null || historialActual.isEmpty() || indiceActual < 0) {
+            view.limpiarPila();
+            return;
+        }
+        EstadoPila estado = historialActual.get(indiceActual);
+        view.setPilaReglas(estado.getPilaReglas());
+        view.setTokenActual(estado.getTokenTexto(), estado.getTokenTipo());
+        view.setLogAccion(estado.getAccion() + "  (línea " + estado.getLinea() + ")");
+        view.setContadorPasos(indiceActual + 1, historialActual.size());
+
+        boolean hayAnterior = indiceActual > 0;
+        boolean haySiguiente = indiceActual < historialActual.size() - 1;
+        view.setBotonesNavegacion(hayAnterior, haySiguiente);
+    }
+
+    /** Avanza un paso en el historial de la pila, si es posible. */
+    public void siguientePaso() {
+        if (historialActual == null || historialActual.isEmpty()) return;
+        if (indiceActual < historialActual.size() - 1) {
+            indiceActual++;
+            actualizarVistaPila();
+        }
+    }
+
+    /** Retrocede un paso en el historial de la pila, si es posible. */
+    public void anteriorPaso() {
+        if (historialActual == null || historialActual.isEmpty()) return;
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarVistaPila();
+        }
+    }
+
+    /** Limpia la vista y el estado de navegación (por ejemplo, al iniciar o crear un nuevo archivo). */
+    public void reiniciarPila() {
+        historialActual = null;
+        indiceActual = -1;
+        view.limpiarPila();
+    }
+
     // ---------- Traducción ----------
+//    public void traducirAPigLatin() {
+//        if (ultimoResultado == null || ultimoResultado.getAst() == null) {
+//            view.appendMessage("No hay AST para traducir. Analiza primero el código.", TipoMensaje.ERROR_SEMANTICO);
+//            return;
+//        }
+//        try {
+//            NodoAST ast = ultimoResultado.getAst();
+//            if (!(ast instanceof NodoPrograma)) {
+//                view.appendMessage("El AST no es un programa válido.", TipoMensaje.ERROR_SEMANTICO);
+//                return;
+//            }
+//            TraductorPigLatin traductor = new TraductorPigLatin();
+//            String codigoPigLatin = traductor.traducir((NodoPrograma) ast);
+//
+//            TextArea textArea = new TextArea(codigoPigLatin);
+//            textArea.setEditable(false);
+//            textArea.setStyle("-fx-font-family: Consolas; -fx-font-size: 13px;");
+//            textArea.setWrapText(true);
+//
+//            ScrollPane scroll = new ScrollPane(textArea);
+//            scroll.setFitToWidth(true);
+//            scroll.setFitToHeight(true);
+//
+//            view.setPigLatinContent(scroll);
+//            view.appendMessage("Traducción a PigLatin completada.", TipoMensaje.INFO);
+//            view.getResultsTabPane().getSelectionModel().select(4);
+//        } catch (Exception e) {
+//            view.appendMessage("Error al traducir: " + e.getMessage(), TipoMensaje.ERROR_SEMANTICO);
+//            e.printStackTrace();
+//        }
+//    }
+    
     public void traducirAPigLatin() {
-        // Debe recorrer el AST para traducir
-        view.appendToConsole("[INFO] Traduciendo a PigLatin... (simulado)");
-        // Luego actualizar pestaña
-        view.setPigLatinContent(new javafx.scene.control.Label("Código PigLatin generado."));
-        view.getResultsTabPane().getSelectionModel().select(4);
+        if (ultimoResultado == null || ultimoResultado.getAst() == null) {
+            view.appendMessage("No hay AST para traducir. Analiza primero el código.", TipoMensaje.ERROR_SEMANTICO);
+            return;
+        }
+        try {
+            NodoAST ast = ultimoResultado.getAst();
+            if (!(ast instanceof NodoPrograma)) {
+                view.appendMessage("El AST no es un programa válido.", TipoMensaje.ERROR_SEMANTICO);
+                return;
+            }
+
+            TraductorPigLatin traductor = new TraductorPigLatin();
+            String codigoPigLatin = traductor.traducir((NodoPrograma) ast);
+
+            // Usar TextArea (sin resaltado) para mostrar el código
+            TextArea textArea = new TextArea(codigoPigLatin);
+            textArea.setEditable(false);
+            textArea.setStyle("-fx-font-family: Consolas; -fx-font-size: 13px;");
+            textArea.setWrapText(true);
+
+            // Envolver en ScrollPane para que sea desplazable
+            ScrollPane scroll = new ScrollPane(textArea);
+            scroll.setFitToWidth(true);
+            scroll.setFitToHeight(true);
+
+            view.setPigLatinContent(scroll);
+            view.appendMessage("Traducción a PigLatin completada.", TipoMensaje.INFO);
+            view.getResultsTabPane().getSelectionModel().select(4);
+
+        } catch (Exception e) {
+            view.appendMessage("Error al traducir: " + e.getMessage(), TipoMensaje.ERROR_SEMANTICO);
+            e.printStackTrace();
+        }
     }
 
     // ---------- Ayuda ----------
@@ -396,10 +528,9 @@ public class MainController {
 
             // Guardar
             ImageIO.write(image, "png", file);
-            view.appendToConsole("[INFO] AST exportado a: " + file.getAbsolutePath());
+            view.appendToConsole("AST exportado a: " + file.getAbsolutePath());
         } catch (IOException e) {
             showError("Error al exportar", e.getMessage());
         }
     }
 }
-

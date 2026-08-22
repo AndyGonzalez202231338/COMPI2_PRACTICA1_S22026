@@ -8,6 +8,7 @@ import com.mycompany.codexlatinuscompiler.gui.controller.MainController;
 import com.mycompany.codexlatinuscompiler.gui.util.TipoMensaje;
 import com.mycompany.codexlatinuscompiler.gui.view.console.ConsoleView;
 import java.time.Duration;
+import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -36,6 +37,7 @@ public class MainView extends BorderPane {
     private TextArea consoleTextArea;
     private TabPane resultsTabPane;
     private Label statusLabel;
+    private PilaProcesosView pilaProcesosView;
 
     public MainView() {
         controller = new MainController(this); // Pasamos la vista al controlador
@@ -258,7 +260,9 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
         tabSymbols.setClosable(false);
 
         Tab tabStack = new Tab("Pila");
-        tabStack.setContent(new Label("La pila de procesos se mostrará aquí."));
+        pilaProcesosView = new PilaProcesosView(controller);
+        pilaProcesosView.limpiarPila();
+        tabStack.setContent(pilaProcesosView);
         tabStack.setClosable(false);
 
         Tab tabErrors = new Tab("Errores");
@@ -382,5 +386,32 @@ BorderPane.setAlignment(centerSplit, javafx.geometry.Pos.CENTER);
     
     public void appendMessage(String text, TipoMensaje tipo) {
         consoleView.addMessage(text, tipo);
+    }
+
+    // ---------- Métodos delegados para la pestaña "Pila" ----------
+    // (encapsulan la construcción/actualización en PilaProcesosView)
+
+    public void setPilaReglas(List<String> pilaReglas) {
+        pilaProcesosView.setPilaReglas(pilaReglas);
+    }
+
+    public void setTokenActual(String tokenTexto, int tokenTipo) {
+        pilaProcesosView.setTokenActual(tokenTexto, tokenTipo);
+    }
+
+    public void setLogAccion(String accion) {
+        pilaProcesosView.setLogAccion(accion);
+    }
+
+    public void setContadorPasos(int actual, int total) {
+        pilaProcesosView.setContadorPasos(actual, total);
+    }
+
+    public void setBotonesNavegacion(boolean hayAnterior, boolean haySiguiente) {
+        pilaProcesosView.setBotonesNavegacion(hayAnterior, haySiguiente);
+    }
+
+    public void limpiarPila() {
+        pilaProcesosView.limpiarPila();
     }
 }

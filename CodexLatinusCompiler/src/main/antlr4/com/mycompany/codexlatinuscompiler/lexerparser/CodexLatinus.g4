@@ -59,7 +59,7 @@ atributo
     ;
 
 declaracionStructVar
-    : ESTO ID COLON ID literalEstructura
+    : ESTO ID COLON ID literalEstructura?
     ;
 
 literalEstructura
