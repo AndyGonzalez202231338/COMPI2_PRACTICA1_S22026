@@ -167,11 +167,19 @@ public class AnalizadorFase5 {
         if (expr instanceof NodoAccesoAtributo attr) {
             String tipoBase = inferirTipo(attr.base);
             if (tipoBase == null) return null;
+
             Simbolo structDef = tipos.resolverStruct(tipoBase);
-            if (structDef == null) return null;
+            if (structDef == null) {
+                errores.reportar("El tipo '" + tipoBase + "' no es una estructura", attr.linea);
+                return null;
+            }
+
             for (Simbolo at : structDef.atributosStruct) {
                 if (at.nombre.equals(attr.nombreAtributo)) return at.tipo;
             }
+
+            errores.reportar("La estructura '" + tipoBase + "' no tiene el atributo '" +
+                    attr.nombreAtributo + "'", attr.linea);
             return null;
         }
 

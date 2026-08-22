@@ -30,6 +30,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ParametroConte
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CicloPerContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionStructDefContext.class
 com/mycompany/codexlatinuscompiler/symboltable/TablaTipos.class
+com/mycompany/codexlatinuscompiler/translator/TraductorPigLatin.class
 com/mycompany/codexlatinuscompiler/ast/NodoLectura.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SentenciaContext.class
@@ -40,6 +41,8 @@ com/mycompany/codexlatinuscompiler/errors/ManejadorErrores.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ListaExpresionesContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AsignacionContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$FuncionContext.class
+com/mycompany/codexlatinuscompiler/parser/ParserTraceListener.class
+com/mycompany/codexlatinuscompiler/translator/PigLatinUtil.class
 com/mycompany/codexlatinuscompiler/gui/controller/util/ASTGraphvizViewer.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$DeclaracionStructVarContext.class
 com/mycompany/codexlatinuscompiler/CodexLatinusCompiler.class
@@ -50,6 +53,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionAditi
 com/mycompany/codexlatinuscompiler/ast/NodoSi.class
 com/mycompany/codexlatinuscompiler/ast/NodoDeclaracion.class
 com/mycompany/codexlatinuscompiler/ast/NodoAliterIf.class
+com/mycompany/codexlatinuscompiler/parser/EstadoPila.class
 com/mycompany/codexlatinuscompiler/ast/NodoFacere.class
 com/mycompany/codexlatinuscompiler/semantic/AnalizadorFase1.class
 com/mycompany/codexlatinuscompiler/ast/NodoLiteral.class
@@ -75,9 +79,11 @@ com/mycompany/codexlatinuscompiler/ast/NodoAccesoArreglo.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionFuncionesContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoUnaria.class
 com/mycompany/codexlatinuscompiler/ast/NodoAsignacion.class
+com/mycompany/codexlatinuscompiler/translator/PalabraReservada.class
 com/mycompany/codexlatinuscompiler/gui/view/SyntaxHighlighter.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionMultiplicativaContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$SeccionPrincipalContext.class
+com/mycompany/codexlatinuscompiler/gui/view/PilaProcesosView.class
 com/mycompany/codexlatinuscompiler/Compilador.class
 com/mycompany/codexlatinuscompiler/gui/view/console/ConsoleView$1.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$AtributoContext.class
@@ -96,6 +102,7 @@ com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ValorAtributoC
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionUnariaContext.class
 com/mycompany/codexlatinuscompiler/ast/NodoBinaria.class
 com/mycompany/codexlatinuscompiler/errors/ErrorListenerConsola.class
+com/mycompany/codexlatinuscompiler/gui/view/PigLatinSimpleHighlighter.class
 com/mycompany/codexlatinuscompiler/ast/NodoAST.class
 com/mycompany/codexlatinuscompiler/ast/NodoLiteralEstructura.class
 com/mycompany/codexlatinuscompiler/semantic/AnalizadorSemantico.class
@@ -111,5 +118,6 @@ com/mycompany/codexlatinuscompiler/ast/NodoLlamadaFuncionSentencia.class
 com/mycompany/codexlatinuscompiler/ast/NodoAtributoStruct.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$CicloFacereContext.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$BloqueContext.class
+com/mycompany/codexlatinuscompiler/gui/view/PigLatinSimpleHighlighter$StyleSpan.class
 com/mycompany/codexlatinuscompiler/ast/NodoIdentificador.class
 com/mycompany/codexlatinuscompiler/lexerparser/CodexLatinusParser$ExpresionRelacionalContext.class

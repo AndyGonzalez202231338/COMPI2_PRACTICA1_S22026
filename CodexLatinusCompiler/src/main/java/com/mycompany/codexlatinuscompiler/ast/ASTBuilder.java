@@ -114,7 +114,7 @@ public class ASTBuilder extends CodexLatinusBaseVisitor<NodoAST> {
         nodo.linea = ctx.getStart().getLine();
         nodo.nombre = ctx.ID(0).getText();
         nodo.tipoStruct = ctx.ID(1).getText();
-        nodo.valores = (NodoLiteralEstructura) visit(ctx.literalEstructura());
+        nodo.valores = ctx.literalEstructura() != null ? (NodoLiteralEstructura) visit(ctx.literalEstructura()) : null;
         return nodo;
     }
     

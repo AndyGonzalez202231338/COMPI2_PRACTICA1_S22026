@@ -13,7 +13,7 @@ import java.util.List;
 public class Simbolo {
     public String nombre;
     public String tipo; // "numerus", "textum", "decimalis", "littera", "booleano", o el nombre de una struct (ej. "Persona")
-    
+    public boolean inicializada;
     public int linea;                 // dónde se declaró, para mensajes de error
 
     public boolean esArreglo;

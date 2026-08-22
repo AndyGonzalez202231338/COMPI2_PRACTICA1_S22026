@@ -197,7 +197,7 @@ public class AnalizadorFase4 {
 
     private void validarLiteralEstructura(NodoLiteralEstructura lit, String nombreStruct) {
         Simbolo structDef = tipos.resolverStruct(nombreStruct);
-        if (structDef == null) return; // ya reportado en Fase 2
+        if (structDef == null) return; // ya reportado en Fase 1 (redeclaración/inexistencia del tipo)
 
         Set<String> vistos = new HashSet<>();
 
@@ -209,7 +209,11 @@ public class AnalizadorFase4 {
             }
 
             Simbolo attrDef = buscarAtributo(structDef, asig.nombreAtributo);
-            if (attrDef == null) continue; // ya reportado en Fase 2 (atributo inexistente)
+            if (attrDef == null) {
+                errores.reportar("La estructura '" + nombreStruct + "' no tiene el atributo '" +
+                        asig.nombreAtributo + "'", asig.linea);
+                continue;
+            }
 
             if (asig.tamanoArreglo != null) {
                 validarAtributoArreglo(asig, attrDef, nombreStruct);
@@ -219,8 +223,16 @@ public class AnalizadorFase4 {
                 validarAtributoEscalar(asig, attrDef, nombreStruct);
             }
         }
-    }
 
+        // Verifica que TODOS los atributos de la struct hayan sido asignados
+        for (Simbolo attrDef : structDef.atributosStruct) {
+            if (!vistos.contains(attrDef.nombre)) {
+                errores.reportar("Falta el atributo '" + attrDef.nombre +
+                        "' en el literal de '" + nombreStruct + "'", lit.linea);
+            }
+        }
+    }
+    
     private Simbolo buscarAtributo(Simbolo structDef, String nombre) {
         for (Simbolo at : structDef.atributosStruct) {
             if (at.nombre.equals(nombre)) return at;
@@ -292,11 +304,19 @@ public class AnalizadorFase4 {
         if (expr instanceof NodoAccesoAtributo attr) {
             String tipoBase = inferirTipo(attr.base);
             if (tipoBase == null) return null;
+
             Simbolo structDef = tipos.resolverStruct(tipoBase);
-            if (structDef == null) return null;
+            if (structDef == null) {
+                errores.reportar("El tipo '" + tipoBase + "' no es una estructura", attr.linea);
+                return null;
+            }
+
             for (Simbolo at : structDef.atributosStruct) {
                 if (at.nombre.equals(attr.nombreAtributo)) return at.tipo;
             }
+
+            errores.reportar("La estructura '" + tipoBase + "' no tiene el atributo '" +
+                    attr.nombreAtributo + "'", attr.linea);
             return null;
         }
 
